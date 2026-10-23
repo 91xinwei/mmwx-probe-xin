@@ -3756,9 +3756,10 @@
   width: 14px;
   height: 14px;
 }
+/* 选中态与页面上其它切换按钮(视图切换、筛选)一致:金色渐变 + 深色字 */
 .premium-probe-forward-modes button.is-active {
-  color: var(--pp-gold-bright);
-  background: rgba(216, 180, 106, 0.12);
+  color: #1a1305;
+  background: linear-gradient(90deg, #b97f22, #e2bf65);
 }
 .premium-probe-forward-modes button:not(.is-active):hover {
   color: #f3ecdc;
@@ -4354,7 +4355,7 @@
   background: color-mix(in srgb, currentColor 4%, transparent);
 }
 /* light 主题:暗色主题的浅灰字在奶白底上过淡,统一压深 */
-:root.light .premium-probe-forward-modes button,
+:root.light .premium-probe-forward-modes button:not(.is-active),
 :root.light .premium-probe-forward-chaintabs button,
 :root.light .premium-probe-forward-chainbar .k,
 :root.light .premium-probe-forward-stats .stat .k,
@@ -4373,6 +4374,10 @@
 :root.light .premium-probe-forward-empty,
 :root.light .premium-probe-forward-trend-empty {
   color: #8a7f64;
+}
+/* light 主题:按钮组底色不要用暗色主题的半透明黑(奶白底上成了一块灰) */
+:root.light .premium-probe-forward-modes {
+  background: rgba(168, 124, 34, 0.06);
 }
 /* light 主题:近白值色(链路结构)在奶白底上不可见 → 用主题深色文字 */
 :root.light .premium-probe-forward-stats .stat.is-n .v {
