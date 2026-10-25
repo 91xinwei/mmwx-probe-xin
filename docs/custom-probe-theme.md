@@ -16,3 +16,7 @@
 - `xin-observatory` 是本仓库实现的自定义主题名称，不是官方内置主题。
 
 扩展代码保存在 CustomProbeTheme、EmbeddedIPQuality 等独立模块；原有布局、内置主题组件不直接修改。公开金额过滤继续保留，以满足之前的隐私要求。
+
+## 所有者入口与主题
+
+`/owner` 只作为 Access 登录和私有成本入口，同样遵循后台 `appearance.theme`，不再强制打开 Observatory 页面。原主题在此路径登录后可在原布局读取私有成本，首页仍保持公开过滤；自定义主题继续通过已认证私有接口获取成本。2026-10-25 核查线上返回 premium/light，show_globe=true；未选择 xin-observatory 时不会向原页面插入 IP 报告。现有地球为拖动旋转，没有自动自转。

@@ -72,7 +72,7 @@ export function saveColorModePreference(mode: ProbeColorMode) {
   }
 }
 
-export function useProbe(includeOwnerCosts = false): {
+export function useProbe(includeOwnerCosts = location.pathname === "/owner"): {
   data?: ProbePayload;
   error?: string;
   updatedAt?: number;

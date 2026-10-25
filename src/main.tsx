@@ -33,7 +33,6 @@ function ThemeEntry() {
 
 const params = new URLSearchParams(location.search);
 const useObservatory =
-  location.pathname === "/owner" ||
   params.get("view") === "observatory" ||
   params.get("tab") === "ip" ||
   params.get("demo") === "1";
