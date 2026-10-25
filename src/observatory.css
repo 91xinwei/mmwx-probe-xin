@@ -1846,3 +1846,27 @@
     font-size: 27px;
   }
 }
+
+.ob-earth-panel { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:24px; margin:24px 0; padding:24px; border:1px solid var(--ob-line); border-radius:18px; background:#091923; color:#d9f6f4; }
+.ob-earth-map { min-width:0; --globe-ocean-light:#153b50; --globe-ocean-dark:#06141f; }
+.ob-earth-panel .ob-section-title h2 { color:#d9f6f4; }
+.ob-earth-panel .ob-section-title span,.ob-earth-map>small { color:#8fb3bd; }
+.ob-earth-map .globe-stage { padding:0; background:transparent; }
+.ob-earth-map .region-globe { width:100%; max-height:350px; }
+.ob-earth-map .globe-country { fill:#183e50; stroke:#43808b; }
+.ob-earth-map .globe-country.active { fill:#2d8a91; stroke:#7af1e0; }
+.ob-earth-map .region-point { fill:#a0ffec; }
+.ob-earth-map .region-point-halo { fill:#39dac0; }
+.ob-earth-map .globe-grid,.ob-earth-map .globe-outline { stroke:#397483; }
+.ob-earth-map .region-label { fill:#13323d; stroke:#43808b; }
+.ob-earth-map .region-label-text { fill:#e2fff7; }
+.ob-earth-map .globe-stage p { color:#8fb3bd; }
+.ob-earth-scroll { max-height:370px; overflow:auto; padding-right:8px; }
+.ob-earth-node { display:block; width:100%; padding:14px 0; border:0; border-bottom:1px solid #23424d; background:transparent; color:inherit; text-align:left; cursor:pointer; }
+.ob-earth-node>div:first-child { display:flex; justify-content:space-between; gap:12px; margin-bottom:10px; }
+.ob-earth-node strong { overflow-wrap:anywhere; }
+.ob-earth-node span { color:#92c6c3; }
+.ob-earth-meters { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.ob-earth-node .ob-track { background:#1d3b46; }
+.ob-earth-node .ob-track i { background:#5bdbc6; }
+@media(max-width:760px) { .ob-earth-panel { grid-template-columns:1fr; padding:18px; } .ob-earth-scroll { max-height:300px; } }

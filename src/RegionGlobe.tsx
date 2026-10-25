@@ -100,7 +100,7 @@ function RegionLabels({ locations, projection, rotation, unitsPerPx }: {
 }
 
 /** compact:放在指标旁的小地球,裁掉两侧给弧线留的空白,底部说明文字也省掉 */
-export function RegionGlobe({ regions, compact = false }: { regions: string[]; compact?: boolean }) {
+export function RegionGlobe({ regions, compact = false, showArcs = true }: { regions: string[]; compact?: boolean; showArcs?: boolean }) {
   const [rotation, setRotation] = useState<[number, number]>(DEFAULT_ROTATION)
   const drag = useRef<{ x: number; y: number; rotation: [number, number] } | undefined>(undefined)
   // 地区集合不变时保持 key 稳定；节点地区变化时同步刷新地图高亮。
@@ -168,7 +168,7 @@ export function RegionGlobe({ regions, compact = false }: { regions: string[]; c
         const count = code ? activeRegions.get(code) || 0 : 0
         return <path key={id} className={count ? 'globe-country active' : 'globe-country'} d={path(country) || ''}><title>{country.properties?.name || id}{count ? ` · ${count} 台服务器` : ''}</title></path>
       })}
-      <RegionArcs arcs={arcs} projection={projection} />
+      {showArcs && <RegionArcs arcs={arcs} projection={projection} />}
       <g className="globe-points">{locations.map(location => <g key={location.code} className="laser-origin"><path className="region-point-halo" d={haloPath({ type: 'Point', coordinates: location.coordinates }) || ''} /><path className="region-point" d={pointPath({ type: 'Point', coordinates: location.coordinates }) || ''}><title>{location.code} · {location.count} 台服务器</title></path></g>)}</g>
       <path className="globe-outline" d={path({ type: 'Sphere' }) || ''} />
       <RegionLabels locations={locations} projection={projection} rotation={rotation} unitsPerPx={unitsPerPx} />

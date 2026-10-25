@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import {
   Activity,
   ArrowDown,
@@ -47,6 +47,7 @@ import { OwnerCosts } from "./OwnerCosts";
 import { IPQuality } from "./IPQuality";
 import { ResourceHistory, UnlockResults } from "./ProbeExtras";
 import "./observatory.css";
+const RegionGlobe = lazy(() => import("./RegionGlobe").then((m) => ({ default: m.RegionGlobe })));
 const size = formatBytes;
 const pct = (n?: number) => (n === undefined ? "—" : `${n.toFixed(1)}%`);
 function Meter({ label, value }: { label: string; value?: number }) {
@@ -629,6 +630,25 @@ function Dashboard({
                 </article>
               ))}
             </section>
+            {page === "overview" && (
+              <section className="ob-earth-panel">
+                <div className="ob-earth-map">
+                  <div className="ob-section-title"><h2><Globe2 size={18} /> 全球节点分布</h2><span>拖动旋转</span></div>
+                  <Suspense fallback={<div className="ob-empty">地球加载中…</div>}><RegionGlobe regions={servers.map((s) => s.region ?? "")} showArcs={false} /></Suspense>
+                  <small>标记按国家或地区聚合，不代表服务器精确位置。</small>
+                </div>
+                <div className="ob-earth-nodes">
+                  <div className="ob-section-title"><h2>节点资源实时状态</h2><span>{online.length} / {servers.length} 在线</span></div>
+                  <div className="ob-earth-scroll">
+                    {servers.map((s, index) => <button className="ob-earth-node" key={`${index}-${s.name}`} onClick={() => setSelected({ index, name: s.name })}>
+                      <div><strong>{s.region} {s.name || `节点 ${index + 1}`}</strong><span>{s.online ? "在线" : "离线"}</span></div>
+                      <div className="ob-earth-meters"><Meter label="CPU" value={s.online ? s.cpu_pct : undefined} /><Meter label="内存" value={s.online ? memPct(s) : undefined} /></div>
+                    </button>)}
+                    {!servers.length && <div className="ob-empty">等待节点数据</div>}
+                  </div>
+                </div>
+              </section>
+            )}
             {page === "overview" && (
               <section className="ob-insights">
                 <article>
