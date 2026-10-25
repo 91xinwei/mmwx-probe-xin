@@ -50,3 +50,19 @@
     flex-wrap: wrap;
   }
 }
+
+/* Only the custom theme changes its extension layout; built-in themes stay intact. */
+.xin-custom-probe {
+  min-height: 100svh;
+  background: #080909;
+}
+:root.light .xin-custom-probe {
+  background: #f7f4ed;
+}
+.xin-custom-probe .embedded-ip-quality {
+  margin: 16px 0 0;
+  width: 100%;
+}
+.xin-custom-probe .embedded-ip-quality .ob-ip-panel {
+  margin: 0;
+}
