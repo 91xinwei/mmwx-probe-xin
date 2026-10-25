@@ -1,3 +1,4 @@
+import { loadIPReports } from "./worker/ip-reports";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 const runFile = promisify(execFile);
@@ -27,6 +28,27 @@ export default defineConfig(({ mode, command }) => {
                     request.url ?? "/",
                     "http://localhost",
                   );
+                  if (incoming.pathname === "/api/ip-reports") {
+                    if (request.method !== "GET") {
+                      response.statusCode = 405;
+                      response.end();
+                      return;
+                    }
+                    response.setHeader("Content-Type", "application/json");
+                    response.setHeader("Cache-Control", "no-store");
+                    const payload = await loadIPReports(async (ip) => {
+                      const url = new URL("https://api.ip2location.io/");
+                      url.searchParams.set("ip", ip);
+                      const { stdout } = await runFile(
+                        "curl",
+                        ["-fsS", "--max-time", "12", url.href],
+                        { maxBuffer: 1024 * 1024 },
+                      );
+                      return JSON.parse(stdout);
+                    });
+                    response.end(JSON.stringify(payload));
+                    return;
+                  }
                   if (incoming.pathname.startsWith("/api/owner/")) {
                     response.statusCode = 403;
                     response.setHeader("Content-Type", "application/json");

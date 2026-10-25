@@ -1,3 +1,4 @@
+import { ipReportsResponse } from "./ip-reports";
 import { publicResponse, publicFrame, project } from "./public-data";
 import { isOwner, ownerConfig, type OwnerEnv } from "./owner-auth";
 
@@ -5,6 +6,7 @@ interface Env extends OwnerEnv {
   ASSETS: Fetcher;
   MMWX_ORIGIN: string;
   PROBE_TOKEN: string;
+  IP2LOCATION_API_KEY?: string;
 }
 
 const routes: Record<string, string> = {
@@ -115,6 +117,13 @@ function fromOwnPage(request: Request, self: string): boolean {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const incoming = new URL(request.url);
+    if (incoming.pathname === "/api/ip-reports") {
+      if (request.method !== "GET")
+        return json({ error: "Method not allowed" }, 405);
+      if (!fromOwnPage(request, incoming.origin))
+        return json({ error: "Not found" }, 404);
+      return ipReportsResponse(request, env.IP2LOCATION_API_KEY);
+    }
     if (incoming.pathname === "/login") {
       return Response.redirect(
         new URL("/login", env.MMWX_ORIGIN).toString(),

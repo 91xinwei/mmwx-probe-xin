@@ -44,6 +44,7 @@ import {
 import { demo } from "./observatory-demo";
 import { PingChart } from "./ProbeCharts";
 import { OwnerCosts } from "./OwnerCosts";
+import { IPQuality } from "./IPQuality";
 import { ResourceHistory, UnlockResults } from "./ProbeExtras";
 import "./observatory.css";
 const size = formatBytes;
@@ -112,58 +113,6 @@ function TriRows({
         </div>
       ))}
     </div>
-  );
-}
-const sources = [
-  {
-    name: "IPinfo",
-    description: "归属地 · ASN · 网络类型",
-    url: "https://ipinfo.io/",
-  },
-  {
-    name: "Scamalytics",
-    description: "欺诈风险分 · 代理标记",
-    url: "https://scamalytics.com/ip",
-  },
-  {
-    name: "AbuseIPDB",
-    description: "滥用报告 · 最近报告时间",
-    url: "https://www.abuseipdb.com/",
-  },
-];
-function IPQuality() {
-  return (
-    <section className="ob-ip-panel">
-      <div className="ob-section-title">
-        <h2>
-          <ShieldCheck size={19} /> IP 质量与来源
-        </h2>
-        <span>待接入真实出口 IP 数据</span>
-      </div>
-      <p>
-        当前公开探针不提供出口
-        IP，尚无可核验的质量报告。节点名称中的“家宽”不作为检测结论。
-      </p>
-      <div className="ob-source-grid">
-        {sources.map((s) => (
-          <article key={s.name}>
-            <h3>
-              {s.name}
-              <ArrowUpRight size={15} />
-            </h3>
-            <p>{s.description}</p>
-            <strong>未接入</strong>
-            <a href={s.url} target="_blank" rel="noopener noreferrer">
-              访问来源网站 ↗
-            </a>
-          </article>
-        ))}
-      </div>
-      <p className="ob-hint">
-        接入后分别展示来源分数、检测时间和过期状态；具体 IP
-        与报告深链仅在所有者视图显示。
-      </p>
-    </section>
   );
 }
 function Detail({
@@ -458,7 +407,7 @@ function Detail({
           </>
         )}
         {tab === "unlocks" && <UnlockResults server={server} />}
-        {tab === "ip" && <IPQuality />}
+        {tab === "ip" && <IPQuality nodeName={server.name ?? ""} />}
         <a
           className="ob-classic-link"
           href={isDemo ? "?view=classic" : "?view=classic"}
@@ -489,7 +438,11 @@ function Dashboard({
   const [selected, setSelected] = useState<{ index: number; name?: string }>();
   const [family, setFamily] = useState<IPFamily>("IPv4");
   const [page, setPage] = useState(
-    location.pathname === "/owner" ? "costs" : "overview",
+    location.pathname === "/owner"
+      ? "costs"
+      : new URLSearchParams(location.search).get("tab") === "ip"
+        ? "ip"
+        : "overview",
   );
   const [owner, setOwner] = useState(false);
   useEffect(() => {

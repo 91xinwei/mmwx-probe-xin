@@ -1,0 +1,50 @@
+{
+  "reports": [
+    {
+      "id": "iplense-24.249.30.27",
+      "ip": "24.249.30.27",
+      "source": "iplense",
+      "source_name": "IPLense",
+      "report_url": "https://iplense.cc/zh/ip/24.249.30.27",
+      "observed_at": "2026-10-25",
+      "collection": "page_snapshot",
+      "geography": "美国 · 内华达州 · 拉斯维加斯",
+      "registration_country": "美国",
+      "asn": "AS22773",
+      "organization": "Cox Communications Inc.",
+      "network": "24.249.24.0/21",
+      "tags": ["原生", "家宽"],
+      "metrics": [
+        {
+          "label": "综合评分",
+          "value": 98,
+          "maximum": 100,
+          "direction": "higher_is_better",
+          "description": "原站评价：优秀"
+        },
+        {
+          "label": "纯净度风险值",
+          "value": 1,
+          "maximum": 100,
+          "direction": "lower_is_better",
+          "description": "原站评价：极度纯净"
+        }
+      ],
+      "asn_traffic": { "human": 76.09, "automated": 23.91 }
+    },
+    {
+      "id": "ip2location-24.249.30.27",
+      "ip": "24.249.30.27",
+      "source": "ip2location",
+      "source_name": "IP2Location.io",
+      "report_url": "https://www.ip2location.io/24.249.30.27",
+      "observed_at": "2026-10-25",
+      "collection": "api",
+      "geography": "United States of America · Nevada · Las Vegas",
+      "asn": "AS22773",
+      "organization": "Cox Communications Inc.",
+      "is_proxy": false,
+      "metrics": []
+    }
+  ]
+}

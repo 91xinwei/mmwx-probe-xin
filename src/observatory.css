@@ -1624,3 +1624,225 @@
     display: block;
   }
 }
+.ob-report-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 22px;
+}
+.ob-report-card {
+  background: var(--ob-paper);
+  border: 1px solid var(--ob-line);
+  border-radius: 10px;
+  padding: 23px;
+}
+.ob-report-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 15px;
+}
+.ob-report-heading h3 {
+  font-size: 24px;
+  letter-spacing: -0.7px;
+  margin: 10px 0 12px;
+  font-variant-numeric: tabular-nums;
+}
+.ob-report-kind {
+  font-size: 10px;
+  padding: 6px 8px;
+  border-radius: 5px;
+  background: var(--ob-bg);
+  color: var(--ob-muted);
+  white-space: nowrap;
+}
+.ob-report-tags {
+  display: flex;
+  gap: 7px;
+  margin: 2px 0 15px;
+}
+.ob-report-tags span {
+  padding: 5px 10px;
+  color: #357c63;
+  background: #55a28b12;
+  border: 1px solid #55a28b44;
+  border-radius: 4px;
+  font-size: 11px;
+}
+.ob-report-metrics {
+  display: flex;
+  gap: 26px;
+  padding: 18px 0;
+  border-top: 1px solid var(--ob-line);
+  border-bottom: 1px solid var(--ob-line);
+  margin: 17px 0;
+}
+.ob-report-metrics > div {
+  flex: 1;
+}
+.ob-report-metrics > div > span {
+  font-size: 12px;
+  color: var(--ob-muted);
+}
+.ob-report-metrics strong {
+  display: block;
+  font-size: 29px;
+  font-weight: 500;
+  letter-spacing: -0.8px;
+  margin: 12px 0 7px;
+  color: var(--ob-accent);
+  font-variant-numeric: tabular-nums;
+}
+.ob-report-metrics small {
+  color: var(--ob-muted);
+  font-size: 10px;
+}
+.ob-report-metrics p {
+  font-size: 11px;
+  margin: 9px 0 0;
+  color: var(--ob-muted);
+}
+.ob-report-facts {
+  margin: 14px 0;
+}
+.ob-report-facts > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 22px;
+  padding: 9px 0;
+  font-size: 12px;
+}
+.ob-report-facts dt {
+  color: var(--ob-muted);
+  white-space: nowrap;
+}
+.ob-report-facts dd {
+  margin: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.ob-asn-traffic {
+  margin: 18px 0;
+  background: var(--ob-bg);
+  padding: 14px;
+  border-radius: 6px;
+  font-size: 11px;
+}
+.ob-asn-traffic > div {
+  height: 5px;
+  background: #ce674c88;
+  margin-top: 12px;
+  overflow: hidden;
+  border-radius: 4px;
+}
+.ob-asn-traffic i {
+  display: block;
+  height: 100%;
+  background: #55a28b;
+}
+.ob-asn-traffic p {
+  font-size: 10px;
+  margin: 10px 0 6px;
+}
+.ob-asn-traffic small {
+  font-size: 9px;
+  color: var(--ob-muted);
+}
+.ob-report-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  border-top: 1px solid var(--ob-line);
+  padding-top: 16px;
+  font-size: 10px;
+  color: var(--ob-muted);
+  line-height: 1.7;
+}
+.ob-report-bottom a {
+  color: var(--ob-accent);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.ob-report-bottom b {
+  display: block;
+  font-weight: 400;
+  color: #af5c39;
+}
+.ob-source-status {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.ob-source-status a {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.ob-report-refresh {
+  border: 1px solid var(--ob-line);
+  background: var(--ob-paper);
+  color: var(--ob-accent) !important;
+  border-radius: 5px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+}
+.ob-report-refresh:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.ob-report-warning {
+  color: #af5c39 !important;
+  border-left: 2px solid #ce674c;
+  padding-left: 12px;
+}
+.ob-ip-reports .ob-empty a {
+  display: block;
+  color: var(--ob-accent);
+  margin-top: 18px;
+  font-size: 12px;
+}
+.ob-detail .ob-report-grid,
+.ob-detail .ob-source-status {
+  grid-template-columns: 1fr;
+}
+@media (max-width: 850px) {
+  .ob-report-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 680px) {
+  .ob-report-card {
+    padding: 18px;
+  }
+  .ob-report-heading h3 {
+    font-size: 22px;
+  }
+  .ob-report-heading {
+    gap: 8px;
+  }
+  .ob-report-kind {
+    font-size: 9px;
+    padding: 5px;
+  }
+  .ob-report-bottom {
+    align-items: start;
+    flex-direction: column;
+  }
+  .ob-source-status {
+    grid-template-columns: 1fr;
+  }
+  .ob-ip-reports .ob-section-title {
+    flex-direction: row;
+    align-items: center;
+  }
+  .ob-ip-reports .ob-section-title h2 {
+    font-size: 14px;
+  }
+  .ob-report-metrics strong {
+    font-size: 27px;
+  }
+}

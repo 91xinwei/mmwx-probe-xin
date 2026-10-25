@@ -47,3 +47,11 @@ API：https://api.ip2location.io/?ip={ip} ，支持指定IPv4/IPv6；可按文�
 3. 暗色翡翠节点卡：/Users/weixin/.codex/generated_images/01a171d4-5141-75c3-b4e8-2f342bdc8546/exec-9dea549c-34fc-4ab5-8079-77206f801362.png
 
 这三张均为视觉概念，不是运行截图；图内数据/地理标记不用于推导实测结论。待用户选择后再按真实数据实现。新版源码已移除转发链入口和展示；原有视图与接口兼容性保留。
+
+## 已实现的报告展示（2026-10-25）
+
+`?tab=ip` 展示显式收录的 `24.249.30.27`，每份报告保留来源链接、读取日期和来源自身的评分口径。IPLense 使用当天已读取的页面快照：综合评分 98/100（高为好）、风险值 1/100（低为好）；ASN 流量比例明确标注为 ASN 级统计。没有实现 IPLense 自动抓取。
+
+`/api/ip-reports` 查询 IP2Location.io 的已收录 IP，成功缓存一小时，失败保留原快照及原时间、短缓存一分钟。可选 Worker secret `IP2LOCATION_API_KEY` 用于官方 API；无密钥时只展示官方返回的基本信息，未返回的评分不会补零。IPPure、Net.Coffee 暂时显示查询入口和未取得结果。
+
+新增报告在 `src/data/ip-reports.json` 配置；只查询显式收录地址，不提供任意 IP 代理。节点关联必须通过 `node_names` 显式填写，未关联的报告只出现在独立报告区。此变更尚未部署到线上 Worker。
