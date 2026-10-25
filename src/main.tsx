@@ -3,19 +3,24 @@ import { createRoot } from "react-dom/client";
 const App = lazy(() =>
   import("./App").then((module) => ({ default: module.App })),
 );
-import { Observatory } from "./Observatory";
+const Observatory = lazy(() =>
+  import("./Observatory").then((module) => ({ default: module.Observatory })),
+);
 import { applyAppearance } from "./use-probe";
 import "./styles.css";
+
+const params = new URLSearchParams(location.search);
+const useObservatory =
+  location.pathname === "/owner" ||
+  params.get("view") === "observatory" ||
+  params.get("tab") === "ip" ||
+  params.get("demo") === "1";
 
 applyAppearance();
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Suspense fallback={<div className="center">加载监控视图…</div>}>
-      {new URLSearchParams(location.search).get("view") === "classic" ? (
-        <App />
-      ) : (
-        <Observatory />
-      )}
+      {!useObservatory ? <App /> : <Observatory />}
     </Suspense>
   </StrictMode>,
 );
