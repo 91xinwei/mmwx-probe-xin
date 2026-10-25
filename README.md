@@ -163,3 +163,4 @@ git push -u origin main
 ## 许可证
 
 本项目采用 [Miaomiaowu X Source Available License v1.0](LICENSE)。允许非商业使用、学习、修改和按许可证要求分发；商业使用需取得授权。
+<!-- Cloudflare Git integration verification -->
