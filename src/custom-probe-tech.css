@@ -1,0 +1,208 @@
+.xin-tech {
+  background: #050c15;
+  color-scheme: dark;
+  min-height: 100svh;
+}
+.xin-tech .observatory {
+  --ob-bg: #050c15;
+  --ob-paper: #0b1827;
+  --ob-ink: #e4f2ff;
+  --ob-muted: #8da4bb;
+  --ob-line: #20374a;
+  --ob-accent: #50deed;
+  background:
+    radial-gradient(ellipse at 72% 12%, #12374966, transparent 50%),
+    linear-gradient(#12243633 1px, transparent 1px),
+    linear-gradient(90deg, #12243633 1px, transparent 1px), #050c15;
+  background-size:
+    auto,
+    48px 48px,
+    48px 48px,
+    auto;
+  font-family: Inter, "PingFang SC", system-ui, sans-serif;
+}
+.xin-tech .observatory:not(.ob-dark) {
+  --ob-bg: #eaf2fa;
+  --ob-paper: #f8fcff;
+  --ob-ink: #122b42;
+  --ob-muted: #49667d;
+  --ob-line: #bfd3e1;
+  --ob-accent: #087d98;
+  background: #eaf2fa;
+  color-scheme: light;
+}
+.xin-tech .ob-header {
+  height: 76px;
+  background: var(--ob-paper);
+  border-bottom: 1px solid var(--ob-line);
+}
+.xin-tech .ob-v2 .ob-main {
+  max-width: 1600px;
+}
+.xin-tech .ob-brand small {
+  color: var(--ob-accent);
+  letter-spacing: 3px;
+}
+.xin-tech .ob-v2 .ob-logo {
+  background: linear-gradient(135deg, #1883b0, #50deed);
+  color: #041321;
+  box-shadow: 0 0 25px #50deed22;
+  border-radius: 9px;
+}
+.xin-tech .ob-intro {
+  padding: 12px 0 0;
+}
+.xin-tech .ob-eyebrow {
+  color: var(--ob-accent);
+  letter-spacing: 3px;
+}
+.xin-tech .ob-v2 .ob-title h1 {
+  font-size: clamp(27px, 3vw, 42px);
+  letter-spacing: -1px;
+  font-weight: 600;
+}
+.xin-tech .ob-title h1 span {
+  color: var(--ob-accent);
+}
+.xin-tech .ob-page-nav {
+  gap: 20px;
+}
+.xin-tech .ob-page-nav > button.active {
+  background: linear-gradient(0deg, #50deed18, transparent);
+}
+.xin-tech .ob-v2-stats article {
+  border-radius: 8px;
+  background: linear-gradient(145deg, #50deed07, transparent), var(--ob-paper);
+  position: relative;
+  overflow: hidden;
+}
+.xin-tech .ob-v2-stats article::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 20px;
+  width: 30px;
+  height: 2px;
+  background: var(--ob-accent);
+}
+.xin-tech .ob-v2-stats strong {
+  color: var(--ob-ink);
+  font-family: ui-monospace, monospace;
+  font-size: 30px;
+}
+.xin-tech .ob-earth-panel {
+  border-radius: 12px;
+  background:
+    radial-gradient(ellipse at 25% 50%, #15506b44, transparent 60%),
+    var(--ob-paper);
+  border-color: var(--ob-line);
+  color: var(--ob-ink);
+  grid-template-columns: 1.15fr 1fr;
+  padding: 24px 28px;
+}
+.xin-tech .ob-earth-map .region-globe {
+  max-height: 410px;
+}
+.xin-tech .ob-earth-map {
+  position: relative;
+}
+.xin-tech .ob-earth-map::after {
+  content: "LIVE / GLOBAL COVERAGE";
+  display: block;
+  font:
+    10px ui-monospace,
+    monospace;
+  letter-spacing: 3px;
+  color: var(--ob-accent);
+  margin-top: 12px;
+}
+.xin-tech .ob-earth-scroll {
+  max-height: 420px;
+}
+.xin-tech .ob-earth-panel .ob-section-title h2 {
+  color: var(--ob-ink);
+}
+.xin-tech .ob-earth-node {
+  border-color: var(--ob-line);
+}
+.xin-tech .ob-earth-node:hover {
+  background: #50deed0a;
+}
+.xin-tech .ob-spin-toggle {
+  padding: 6px 10px;
+  border: 1px solid var(--ob-line);
+  border-radius: 5px;
+  background: var(--ob-bg);
+  color: var(--ob-accent);
+  font-size: 11px;
+}
+.xin-tech .ob-card {
+  border-radius: 10px;
+  background: var(--ob-paper);
+  box-shadow: 0 8px 25px #0002;
+}
+.xin-tech .ob-card:hover {
+  border-color: var(--ob-accent);
+}
+.xin-tech .ob-track {
+  background: #1e3547;
+}
+.xin-tech .ob-track i {
+  background: linear-gradient(90deg, #1688b3, #50deed);
+}
+.xin-tech .ob-daily-chart i {
+  background: linear-gradient(0deg, #166c9b, #50deed);
+  box-shadow: 0 0 15px #50deed15;
+}
+.xin-tech .ob-tri-head {
+  color: var(--ob-muted);
+}
+.xin-tech .ob-tri-row b {
+  font-family: ui-monospace, monospace;
+}
+.xin-tech .ob-hint,
+.xin-tech .ob-source-grid p {
+  color: var(--ob-muted);
+}
+.xin-tech .ob-source-grid article {
+  background: var(--ob-paper);
+}
+.xin-tech .ob-report-metrics strong {
+  color: var(--ob-accent);
+}
+.xin-tech .ob-report-tags span {
+  color: #6ce9c9;
+  background: #6ce9c910;
+  border-color: #6ce9c944;
+}
+.xin-tech .ob-ip-panel {
+  margin-top: 24px;
+}
+.xin-tech .ob-footer {
+  border-color: var(--ob-line);
+}
+.xin-tech .ob-modal,
+.xin-tech .ob-detail {
+  background: var(--ob-paper);
+  color: var(--ob-ink);
+}
+.xin-tech button:focus-visible,
+.xin-tech a:focus-visible {
+  outline: 2px solid var(--ob-accent);
+  outline-offset: 3px;
+}
+@media (max-width: 760px) {
+  .xin-tech .ob-earth-panel {
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+  .xin-tech .ob-page-nav {
+    gap: 2px;
+  }
+  .xin-tech .ob-earth-scroll {
+    max-height: 280px;
+  }
+  .xin-tech .ob-v2-stats strong {
+    font-size: 24px;
+  }
+}

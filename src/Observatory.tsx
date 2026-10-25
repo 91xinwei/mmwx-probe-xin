@@ -47,7 +47,9 @@ import { OwnerCosts } from "./OwnerCosts";
 import { IPQuality } from "./IPQuality";
 import { ResourceHistory, UnlockResults } from "./ProbeExtras";
 import "./observatory.css";
-const RegionGlobe = lazy(() => import("./RegionGlobe").then((m) => ({ default: m.RegionGlobe })));
+const RegionGlobe = lazy(() =>
+  import("./RegionGlobe").then((m) => ({ default: m.RegionGlobe })),
+);
 const size = formatBytes;
 const pct = (n?: number) => (n === undefined ? "—" : `${n.toFixed(1)}%`);
 function Meter({ label, value }: { label: string; value?: number }) {
@@ -419,23 +421,26 @@ function Detail({
     </dialog>
   );
 }
-function Dashboard({
+export function Dashboard({
   data,
   error,
   isDemo = false,
   updatedAt,
+  tech = false,
 }: {
   data?: ProbePayload;
   error?: string;
   isDemo?: boolean;
   updatedAt?: number;
+  tech?: boolean;
 }) {
   const [query, setQuery] = useState("");
   const [region, setRegion] = useState("全部地区");
   const [filter, setFilter] = useState("all");
   const [sort, setSort] = useState("default");
   const [list, setList] = useState(false);
-  const [dark, setDark] = useState(false);
+  const [dark, setDark] = useState(tech);
+  const [spinning, setSpinning] = useState(true);
   const [selected, setSelected] = useState<{ index: number; name?: string }>();
   const [family, setFamily] = useState<IPFamily>("IPv4");
   const [page, setPage] = useState(
@@ -529,11 +534,14 @@ function Dashboard({
       </header>
       <main className="ob-main">
         <div className="ob-intro">
-          <div className="ob-eyebrow">YOUR NETWORK, IN FOCUS</div>
+          <div className="ob-eyebrow">
+            {tech ? "XIN / NETWORK COMMAND CENTER" : "YOUR NETWORK, IN FOCUS"}
+          </div>
           <div className="ob-title">
             <div>
               <h1>
-                看见连接的每一面<span>。</span>
+                {tech ? "全球网络 · 实时掌控" : "看见连接的每一面"}
+                <span>。</span>
               </h1>
               <p>上海三网 · 实时资源 · 流量趋势</p>
             </div>
@@ -633,18 +641,64 @@ function Dashboard({
             {page === "overview" && (
               <section className="ob-earth-panel">
                 <div className="ob-earth-map">
-                  <div className="ob-section-title"><h2><Globe2 size={18} /> 全球节点分布</h2><span>拖动旋转</span></div>
-                  <Suspense fallback={<div className="ob-empty">地球加载中…</div>}><RegionGlobe regions={servers.map((s) => s.region ?? "")} showArcs={false} /></Suspense>
+                  <div className="ob-section-title">
+                    <h2>
+                      <Globe2 size={18} /> 全球节点分布
+                    </h2>
+                    <button
+                      className="ob-spin-toggle"
+                      onClick={() => setSpinning(!spinning)}
+                      aria-pressed={spinning}
+                    >
+                      {tech ? (spinning ? "暂停自转" : "开启自转") : "拖动旋转"}
+                    </button>
+                  </div>
+                  <Suspense
+                    fallback={<div className="ob-empty">地球加载中…</div>}
+                  >
+                    <RegionGlobe
+                      regions={servers.map((s) => s.region ?? "")}
+                      showArcs={false}
+                      autoRotate={tech && spinning}
+                    />
+                  </Suspense>
                   <small>标记按国家或地区聚合，不代表服务器精确位置。</small>
                 </div>
                 <div className="ob-earth-nodes">
-                  <div className="ob-section-title"><h2>节点资源实时状态</h2><span>{online.length} / {servers.length} 在线</span></div>
+                  <div className="ob-section-title">
+                    <h2>节点资源实时状态</h2>
+                    <span>
+                      {online.length} / {servers.length} 在线
+                    </span>
+                  </div>
                   <div className="ob-earth-scroll">
-                    {servers.map((s, index) => <button className="ob-earth-node" key={`${index}-${s.name}`} onClick={() => setSelected({ index, name: s.name })}>
-                      <div><strong>{s.region} {s.name || `节点 ${index + 1}`}</strong><span>{s.online ? "在线" : "离线"}</span></div>
-                      <div className="ob-earth-meters"><Meter label="CPU" value={s.online ? s.cpu_pct : undefined} /><Meter label="内存" value={s.online ? memPct(s) : undefined} /></div>
-                    </button>)}
-                    {!servers.length && <div className="ob-empty">等待节点数据</div>}
+                    {servers.map((s, index) => (
+                      <button
+                        className="ob-earth-node"
+                        key={`${index}-${s.name}`}
+                        onClick={() => setSelected({ index, name: s.name })}
+                      >
+                        <div>
+                          <strong>
+                            {s.region} {s.name || `节点 ${index + 1}`}
+                          </strong>
+                          <span>{s.online ? "在线" : "离线"}</span>
+                        </div>
+                        <div className="ob-earth-meters">
+                          <Meter
+                            label="CPU"
+                            value={s.online ? s.cpu_pct : undefined}
+                          />
+                          <Meter
+                            label="内存"
+                            value={s.online ? memPct(s) : undefined}
+                          />
+                        </div>
+                      </button>
+                    ))}
+                    {!servers.length && (
+                      <div className="ob-empty">等待节点数据</div>
+                    )}
                   </div>
                 </div>
               </section>
@@ -921,6 +975,7 @@ function Dashboard({
             </section>
           </>
         )}
+        {tech && page === "overview" && <IPQuality />}
         <footer className="ob-footer">
           <span>
             <Radio size={14} /> Powered by MiaoMiaoWu X

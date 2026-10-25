@@ -100,9 +100,26 @@ function RegionLabels({ locations, projection, rotation, unitsPerPx }: {
 }
 
 /** compact:放在指标旁的小地球,裁掉两侧给弧线留的空白,底部说明文字也省掉 */
-export function RegionGlobe({ regions, compact = false, showArcs = true }: { regions: string[]; compact?: boolean; showArcs?: boolean }) {
+export function RegionGlobe({ regions, compact = false, showArcs = true, autoRotate = false }: { regions: string[]; compact?: boolean; showArcs?: boolean; autoRotate?: boolean }) {
   const [rotation, setRotation] = useState<[number, number]>(DEFAULT_ROTATION)
   const drag = useRef<{ x: number; y: number; rotation: [number, number] } | undefined>(undefined)
+  useEffect(() => {
+    if (!autoRotate) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let frame = 0;
+    let previous = 0;
+    const animate = (now: number) => {
+      if (now - previous >= 50) {
+        const elapsed = previous ? Math.min(now - previous, 100) : 0;
+        previous = now;
+        if (!document.hidden && !drag.current && !reduced.matches)
+          setRotation(([longitude, latitude]) => [((longitude + elapsed * .004 + 180) % 360 + 360) % 360 - 180, latitude]);
+      }
+      frame = requestAnimationFrame(animate);
+    };
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, [autoRotate]);
   // 地区集合不变时保持 key 稳定；节点地区变化时同步刷新地图高亮。
   const regionKey = [...regions].filter(Boolean).sort().join('\u0001')
   const activeRegions = useMemo(() => {

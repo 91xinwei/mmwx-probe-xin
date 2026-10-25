@@ -28,7 +28,12 @@ function ThemeEntry() {
   }, []);
   if (theme === undefined)
     return <main className="center">正在读取探针主题…</main>;
-  return theme === "xin-observatory" ? <CustomProbeTheme /> : <App />;
+  return theme === "xin-observatory" &&
+    new URLSearchParams(location.search).get("view") !== "classic" ? (
+    <CustomProbeTheme />
+  ) : (
+    <App />
+  );
 }
 
 const params = new URLSearchParams(location.search);
