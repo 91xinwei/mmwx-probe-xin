@@ -1,3 +1,4 @@
+import { EmbeddedIPQuality } from "./EmbeddedIPQuality";
 import {
   createContext,
   Fragment,
@@ -3124,6 +3125,7 @@ export function App() {
             </button>
           </div>
         )}
+        <EmbeddedIPQuality />
       </main>
       <footer>
         Powered by{" "}

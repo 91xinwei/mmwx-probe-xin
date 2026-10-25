@@ -1,3 +1,4 @@
+import { EmbeddedIPQuality } from "./EmbeddedIPQuality";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import {
   Activity,
@@ -3559,6 +3560,7 @@ export function PremiumProbePage({
             </section>
           </>
         )}
+        <EmbeddedIPQuality />
       </main>
 
       {selectedServerIndex !== undefined && servers[selectedServerIndex] && (
