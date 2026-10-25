@@ -1,4 +1,7 @@
-interface Env {
+import { publicResponse, publicFrame, project } from "./public-data";
+import { isOwner, ownerConfig, type OwnerEnv } from "./owner-auth";
+
+interface Env extends OwnerEnv {
   ASSETS: Fetcher;
   MMWX_ORIGIN: string;
   PROBE_TOKEN: string;
@@ -122,6 +125,61 @@ export default {
       return proxyAuth(request, incoming, env);
     }
 
+    const ownerPath = incoming.pathname.startsWith("/api/owner/");
+    if (ownerPath) {
+      if (request.method !== "GET")
+        return json({ error: "Method not allowed" }, 405);
+      if (!(await isOwner(request, env)))
+        return json(
+          {
+            error: "Owner authentication required",
+            configured: !!ownerConfig(env),
+          },
+          403,
+        );
+      if (incoming.pathname === "/api/owner/session")
+        return json({ owner: true });
+      if (incoming.pathname !== "/api/owner/costs")
+        return json({ error: "Not found" }, 404);
+      if (!env.PROBE_TOKEN)
+        return json({ error: "Probe is not configured" }, 503);
+      const target = upstreamURL(
+        new Request(new URL("/api/probe", incoming)),
+        env,
+      )!;
+      const upstream = await fetch(target, {
+        headers: {
+          "X-MMwx-Probe-Token": env.PROBE_TOKEN,
+          "X-Forwarded-Host": incoming.host,
+        },
+      });
+      if (!upstream.ok) return json({ error: "Upstream unavailable" }, 502);
+      try {
+        const data = (await upstream.json()) as {
+          enabled?: boolean;
+          servers?: unknown[];
+        };
+        const shape = {
+          name: true,
+          provider_name: true,
+          provider_url: true,
+          region: true,
+          expires_at: true,
+          renewal_price: true,
+          renewal_currency: true,
+          renewal_cycle: true,
+          renewal_price_cny: true,
+        } as const;
+        return json({
+          enabled: data.enabled,
+          servers: data.enabled
+            ? (data.servers ?? []).map((s) => project(s, shape))
+            : [],
+        });
+      } catch {
+        return json({ error: "Invalid upstream response" }, 502);
+      }
+    }
     const target = upstreamURL(request, env);
     if (!target) return env.ASSETS.fetch(request);
     if (request.method !== "GET")
@@ -137,23 +195,67 @@ export default {
     const headers = new Headers(request.headers);
     headers.delete("cookie");
     headers.delete("authorization");
+    headers.delete("cf-access-jwt-assertion");
+    headers.delete("cf-access-authenticated-user-email");
     headers.set("X-Forwarded-Host", new URL(request.url).host);
     headers.set("X-MMwx-Probe-Token", env.PROBE_TOKEN);
 
     const upstream = await fetch(
       new Request(target, { method: "GET", headers }),
     );
-    // WebSocket 的 101 Response 必须原样返回，不能重新构造 body/headers。
-    if (upstream.status === 101 || upstream.webSocket) return upstream;
-
-    const responseHeaders = new Headers(upstream.headers);
-    responseHeaders.set("Cache-Control", "no-store");
-    responseHeaders.set("X-Content-Type-Options", "nosniff");
-    responseHeaders.delete("set-cookie");
-    return new Response(upstream.body, {
-      status: upstream.status,
-      statusText: upstream.statusText,
-      headers: responseHeaders,
-    });
+    if (upstream.webSocket) return relayPublicStream(upstream.webSocket);
+    if (!upstream.ok)
+      return json({ error: "Upstream unavailable" }, upstream.status);
+    try {
+      return json(
+        publicResponse(
+          incoming.pathname,
+          await upstream.json(),
+          incoming.searchParams.get("metric"),
+        ),
+      );
+    } catch {
+      return json({ error: "Invalid upstream response" }, 502);
+    }
   },
 } satisfies ExportedHandler<Env>;
+
+function json(body: unknown, status = 200): Response {
+  return Response.json(body, {
+    status,
+    headers: {
+      "Cache-Control": "private, no-store",
+      "X-Content-Type-Options": "nosniff",
+      Vary: "Cookie, Cf-Access-Jwt-Assertion",
+    },
+  });
+}
+
+function relayPublicStream(upstream: WebSocket): Response {
+  const pair = new WebSocketPair();
+  const client = pair[0],
+    server = pair[1];
+  const stop = () => {
+    try {
+      server.close(1000, "Stream ended");
+    } catch {}
+    try {
+      upstream.close(1000, "Stream ended");
+    } catch {}
+  };
+  upstream.addEventListener("message", (event) => {
+    try {
+      server.send(publicFrame(event.data));
+    } catch {
+      stop();
+    }
+  });
+  upstream.addEventListener("close", stop);
+  upstream.addEventListener("error", stop);
+  server.addEventListener("close", stop);
+  server.addEventListener("error", stop);
+  // This is a read-only snapshot stream: client frames are never forwarded.
+  server.accept();
+  upstream.accept();
+  return new Response(null, { status: 101, webSocket: client });
+}

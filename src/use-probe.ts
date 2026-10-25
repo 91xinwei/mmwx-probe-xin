@@ -67,9 +67,14 @@ export function saveColorModePreference(mode: ProbeColorMode) {
   }
 }
 
-export function useProbe(): { data?: ProbePayload; error?: string } {
+export function useProbe(): {
+  data?: ProbePayload;
+  error?: string;
+  updatedAt?: number;
+} {
   const [data, setData] = useState<ProbePayload>();
   const [error, setError] = useState<string>();
+  const [updatedAt, setUpdatedAt] = useState<number>();
   const timer = useRef<number | undefined>(undefined);
 
   useEffect(() => {
@@ -80,6 +85,7 @@ export function useProbe(): { data?: ProbePayload; error?: string } {
       if (stopped) return;
       applyAppearance(payload.appearance);
       setData(payload);
+      setUpdatedAt(Date.now());
       setError(undefined);
       applyProbeDocumentBranding(payload.title, payload.icon);
     };
@@ -105,6 +111,12 @@ export function useProbe(): { data?: ProbePayload; error?: string } {
     // which otherwise freezes realtime speed at the first snapshot.
     startPolling();
     try {
+      if (import.meta.env.PROBE_READONLY_PREVIEW)
+        return () => {
+          stopped = true;
+          if (timer.current) window.clearInterval(timer.current);
+          timer.current = undefined;
+        };
       const protocol = location.protocol === "https:" ? "wss:" : "ws:";
       ws = new WebSocket(`${protocol}//${location.host}/api/stream`);
       ws.onmessage = (event) => {
@@ -128,5 +140,5 @@ export function useProbe(): { data?: ProbePayload; error?: string } {
     };
   }, []);
 
-  return { data, error };
+  return { data, error, updatedAt };
 }

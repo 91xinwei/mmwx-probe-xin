@@ -7,3 +7,6 @@ wrangler.local.jsonc
 !.dev.vars.example
 *.log
 *.tsbuildinfo
+
+.env.local
+.env.*.local
