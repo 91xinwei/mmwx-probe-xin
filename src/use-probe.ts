@@ -72,7 +72,7 @@ export function saveColorModePreference(mode: ProbeColorMode) {
   }
 }
 
-export function useProbe(): {
+export function useProbe(includeOwnerCosts = false): {
   data?: ProbePayload;
   error?: string;
   updatedAt?: number;
@@ -80,6 +80,7 @@ export function useProbe(): {
   const [data, setData] = useState<ProbePayload>();
   const [ownerCosts, setOwnerCosts] = useState<ProbeServer[]>([]);
   useEffect(() => {
+    if (!includeOwnerCosts) return;
     const controller = new AbortController();
     const refresh = async () => {
       try {
@@ -107,7 +108,7 @@ export function useProbe(): {
       window.clearInterval(interval);
       window.removeEventListener("focus", onFocus);
     };
-  }, []);
+  }, [includeOwnerCosts]);
   const [error, setError] = useState<string>();
   const [updatedAt, setUpdatedAt] = useState<number>();
   const timer = useRef<number | undefined>(undefined);

@@ -1,4 +1,3 @@
-import { EmbeddedIPQuality } from "./EmbeddedIPQuality";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import {
   Activity,
@@ -608,21 +607,16 @@ function RenewalTimeline({
       <div className="premium-probe-renewal-totals">
         <div>
           <span>月度折算总额</span>
-          <strong>{rows.length ? `¥${monthlyTotal.toFixed(2)}` : "—"}</strong>
+          <strong>¥{monthlyTotal.toFixed(2)}</strong>
         </div>
         <div>
           <span>本月未续费金额</span>
-          <strong>
-            {rows.length ? `¥${unpaidThisMonth.toFixed(2)}` : "—"}
-          </strong>
+          <strong>¥{unpaidThisMonth.toFixed(2)}</strong>
         </div>
         <small>按住时间轴可横向拖动</small>
       </div>
       {rows.length === 0 ? (
-        <p className="premium-probe-insights-empty">
-          续费与到期数据仅向所有者展示，或主控尚未提供数据。
-          <a href="/owner">验证所有者身份</a>
-        </p>
+        <p className="premium-probe-insights-empty">暂无可用数据</p>
       ) : (
         <div
           ref={trackRef}
@@ -772,18 +766,13 @@ function BillingOverview({ servers }: { servers: ProbeServer[] }) {
         <span>按人民币月均折算</span>
       </header>
       {rows.length === 0 ? (
-        <p className="premium-probe-insights-empty">
-          成本仅向所有者展示，或主控尚未提供价格。
-          <a href="/owner">验证所有者身份</a>
-        </p>
+        <p className="premium-probe-insights-empty">暂无人民币续费价格数据</p>
       ) : (
         <div className="premium-probe-billing-layout">
           <div className="premium-probe-billing-kpis">
             <div>
               <span>月均基础成本</span>
-              <strong>
-                {rows.length ? `¥${monthlyTotal.toFixed(2)}` : "—"}
-              </strong>
+              <strong>¥{monthlyTotal.toFixed(2)}</strong>
             </div>
             <div>
               <span>年化预算</span>
@@ -3560,7 +3549,6 @@ export function PremiumProbePage({
             </section>
           </>
         )}
-        <EmbeddedIPQuality />
       </main>
 
       {selectedServerIndex !== undefined && servers[selectedServerIndex] && (
