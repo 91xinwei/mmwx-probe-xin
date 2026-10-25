@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import type { ProbeAppearance, ProbePayload, ThemeName } from "./types";
+import type {
+  ProbeAppearance,
+  ProbePayload,
+  ProbeServer,
+  ThemeName,
+} from "./types";
 import { applyProbeDocumentBranding } from "./document-branding";
 import { normalizeColorMode, type ProbeColorMode } from "./theme-preference";
 
@@ -73,6 +78,36 @@ export function useProbe(): {
   updatedAt?: number;
 } {
   const [data, setData] = useState<ProbePayload>();
+  const [ownerCosts, setOwnerCosts] = useState<ProbeServer[]>([]);
+  useEffect(() => {
+    const controller = new AbortController();
+    const refresh = async () => {
+      try {
+        const response = await fetch("/api/owner/costs", {
+          cache: "no-store",
+          signal: controller.signal,
+          redirect: "error",
+        });
+        if (!response.ok) {
+          setOwnerCosts([]);
+          return;
+        }
+        const result = (await response.json()) as { servers?: ProbeServer[] };
+        if (!controller.signal.aborted) setOwnerCosts(result.servers ?? []);
+      } catch {
+        if (!controller.signal.aborted) setOwnerCosts([]);
+      }
+    };
+    void refresh();
+    const interval = window.setInterval(refresh, 60000);
+    const onFocus = () => void refresh();
+    window.addEventListener("focus", onFocus);
+    return () => {
+      controller.abort();
+      window.clearInterval(interval);
+      window.removeEventListener("focus", onFocus);
+    };
+  }, []);
   const [error, setError] = useState<string>();
   const [updatedAt, setUpdatedAt] = useState<number>();
   const timer = useRef<number | undefined>(undefined);
@@ -140,5 +175,32 @@ export function useProbe(): {
     };
   }, []);
 
-  return { data, error, updatedAt };
+  // Attach private fields only to an unambiguous node name. Public WS updates
+  // continue independently; private values are held in memory, never storage.
+  const merged =
+    data && ownerCosts.length
+      ? {
+          ...data,
+          servers: data.servers?.map((server) => {
+            if (
+              !server.name ||
+              (data.servers ?? []).filter((s) => s.name === server.name)
+                .length !== 1
+            )
+              return server;
+            const matches = ownerCosts.filter((s) => s.name === server.name);
+            if (matches.length !== 1) return server;
+            const cost = matches[0];
+            return {
+              ...server,
+              renewal_price: cost.renewal_price,
+              renewal_price_cny: cost.renewal_price_cny,
+              renewal_currency: cost.renewal_currency,
+              renewal_cycle: cost.renewal_cycle,
+              expires_at: cost.expires_at,
+            };
+          }),
+        }
+      : data;
+  return { data: merged, error, updatedAt };
 }
