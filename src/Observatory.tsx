@@ -45,6 +45,7 @@ import { demo } from "./observatory-demo";
 import { PingChart } from "./ProbeCharts";
 import { OwnerCosts } from "./OwnerCosts";
 import { IPQuality } from "./IPQuality";
+import nodeIPMap from "./data/node-ip-map.json";
 import { ResourceHistory, UnlockResults } from "./ProbeExtras";
 import "./observatory.css";
 const RegionGlobe = lazy(() =>
@@ -125,6 +126,7 @@ function Detail({
   isDemo,
   family,
   onClose,
+  initialTab = "network",
 }: {
   server: ProbeServer;
   index: number;
@@ -132,9 +134,10 @@ function Detail({
   isDemo: boolean;
   family: IPFamily;
   onClose: () => void;
+  initialTab?: string;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
-  const [tab, setTab] = useState("network");
+  const [tab, setTab] = useState(initialTab);
   const [range, setRange] = useState("1h");
   const [history, setHistory] = useState<ProbePingSeries[]>();
   const [state, setState] = useState("");
@@ -410,6 +413,9 @@ function Detail({
           </>
         )}
         {tab === "unlocks" && <UnlockResults server={server} />}
+        {tab === "network" && (
+          <IPQuality nodeName={server.name ?? ""} hideUnlinked />
+        )}
         {tab === "ip" && <IPQuality nodeName={server.name ?? ""} />}
         <a
           className="ob-classic-link"
@@ -441,7 +447,11 @@ export function Dashboard({
   const [list, setList] = useState(false);
   const [dark, setDark] = useState(tech);
   const [spinning, setSpinning] = useState(true);
-  const [selected, setSelected] = useState<{ index: number; name?: string }>();
+  const [selected, setSelected] = useState<{
+    index: number;
+    name?: string;
+    tab?: string;
+  }>();
   const [family, setFamily] = useState<IPFamily>("IPv4");
   const [page, setPage] = useState(
     location.pathname === "/owner"
@@ -859,6 +869,12 @@ export function Dashboard({
                         </span>
                         <div>
                           <h3>{s.name || "未命名节点"}</h3>
+                          {tech && (
+                            <code className="ob-node-ip">
+                              {nodeIPMap.find((r) => r.name === s.name)?.ip ??
+                                "IP 未关联"}
+                            </code>
+                          )}
                           <p>
                             {[s.region_city, s.provider_name]
                               .filter(Boolean)
@@ -954,6 +970,14 @@ export function Dashboard({
                         </span>
                         <button
                           className="ob-detail-button"
+                          onClick={() =>
+                            setSelected({ index, name: s.name, tab: "ip" })
+                          }
+                        >
+                          IP 报告 <ShieldCheck size={12} />
+                        </button>
+                        <button
+                          className="ob-detail-button"
                           onClick={() => setSelected({ index, name: s.name })}
                         >
                           节点详情 <ArrowUpRight size={12} />
@@ -975,7 +999,37 @@ export function Dashboard({
             </section>
           </>
         )}
-        {tech && page === "overview" && <IPQuality />}
+        {tech && page === "overview" && (
+          <section className="ob-ip-panel ob-node-directory">
+            <div className="ob-section-title">
+              <h2>
+                <ShieldCheck size={18} /> 节点 IP 检测
+              </h2>
+              <span>按主控地址关联 · 点击直接查看报告</span>
+            </div>
+            <div className="ob-ip-directory-grid">
+              {servers.map((server, index) => (
+                <button
+                  key={index}
+                  onClick={() =>
+                    setSelected({ index, name: server.name, tab: "ip" })
+                  }
+                >
+                  <strong>{server.name}</strong>
+                  <code>
+                    {nodeIPMap.find((r) => r.name === server.name)?.ip ??
+                      "IP 未关联"}
+                  </code>
+                  <span>查看检测结果 ↗</span>
+                </button>
+              ))}
+            </div>
+            <p className="ob-hint">
+              地址取自主控服务管理，尚未独立验证为实际出站
+              IP。风险评分仅显示来源已返回的值。
+            </p>
+          </section>
+        )}
         <footer className="ob-footer">
           <span>
             <Radio size={14} /> Powered by MiaoMiaoWu X
@@ -993,6 +1047,7 @@ export function Dashboard({
           data={payload}
           isDemo={isDemo}
           family={family}
+          initialTab={selected.tab}
           onClose={() => setSelected(undefined)}
         />
       )}

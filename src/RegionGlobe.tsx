@@ -109,11 +109,11 @@ export function RegionGlobe({ regions, compact = false, showArcs = true, autoRot
     let frame = 0;
     let previous = 0;
     const animate = (now: number) => {
-      if (now - previous >= 50) {
+      if (now - previous >= 33) {
         const elapsed = previous ? Math.min(now - previous, 100) : 0;
         previous = now;
         if (!document.hidden && !drag.current && !reduced.matches)
-          setRotation(([longitude, latitude]) => [((longitude + elapsed * .004 + 180) % 360 + 360) % 360 - 180, latitude]);
+          setRotation(([longitude, latitude]) => [((longitude + elapsed * .012 + 180) % 360 + 360) % 360 - 180, latitude]);
       }
       frame = requestAnimationFrame(animate);
     };

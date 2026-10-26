@@ -58,7 +58,15 @@ export async function loadIPReports(
   const refreshed = await Promise.all(
     publishedIPs.map(async (ip) => {
       try {
-        return ip2LocationReport(ip, await lookup(ip), now());
+        const report = ip2LocationReport(ip, await lookup(ip), now());
+        const names = [
+          ...new Set(
+            stored
+              .filter((r) => r.ip === ip)
+              .flatMap((r) => r.node_names ?? []),
+          ),
+        ];
+        return names.length ? { ...report, node_names: names } : report;
       } catch {
         const fallback = stored.find(
           (r) => r.source === "ip2location" && r.ip === ip,
@@ -80,7 +88,7 @@ export async function ipReportsResponse(
   request: Request,
   key?: string,
 ): Promise<Response> {
-  const url = new URL("/__report-cache/v1", request.url);
+  const url = new URL("/__report-cache/v2", request.url);
   const cacheRequest = new Request(url);
   const cache = (caches as CacheStorage & { default: Cache }).default;
   const cached = await cache.match(cacheRequest);
@@ -95,10 +103,9 @@ export async function ipReportsResponse(
     if (!response.ok) throw new Error("Report unavailable");
     return response.json();
   });
-  const failed = payload.reports.some((r) => r.refresh_status === "failed");
   const response = Response.json(payload, {
     headers: {
-      "Cache-Control": `public, max-age=${failed ? 60 : 3600}`,
+      "Cache-Control": "public, max-age=3600",
       "X-Content-Type-Options": "nosniff",
     },
   });

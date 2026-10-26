@@ -206,3 +206,107 @@
     font-size: 24px;
   }
 }
+
+/* Atmospheric motion stays in the custom theme; these rings do not imply routes. */
+.xin-tech .ob-earth-map .globe-stage {
+  position: relative;
+  isolation: isolate;
+}
+.xin-tech .ob-earth-map .globe-stage::before {
+  content: "";
+  position: absolute;
+  inset: 8% 15% 13%;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    #50deed04 210deg,
+    #50deed35 315deg,
+    transparent 360deg
+  );
+  filter: blur(12px);
+  animation: xin-atmosphere 14s linear infinite;
+}
+.xin-tech .ob-earth-map .region-point-halo {
+  animation: xin-node-pulse 2.4s ease-in-out infinite;
+}
+.xin-tech .ob-earth-map .globe-glow {
+  animation: xin-glow 5s ease-in-out infinite;
+}
+@keyframes xin-atmosphere {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes xin-node-pulse {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+@keyframes xin-glow {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .xin-tech .ob-earth-map .globe-stage::before,
+  .xin-tech .ob-earth-map .region-point-halo,
+  .xin-tech .ob-earth-map .globe-glow {
+    animation: none;
+  }
+}
+.xin-tech .ob-node-ip {
+  display: block;
+  color: var(--ob-accent);
+  font:
+    11px ui-monospace,
+    monospace;
+  margin-top: 6px;
+  letter-spacing: 0.6px;
+}
+.xin-tech .ob-ip-directory-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+.xin-tech .ob-ip-directory-grid button {
+  display: grid;
+  gap: 10px;
+  text-align: left;
+  background: var(--ob-bg);
+  border: 1px solid var(--ob-line);
+  border-radius: 8px;
+  padding: 16px;
+}
+.xin-tech .ob-ip-directory-grid button:hover {
+  border-color: var(--ob-accent);
+  box-shadow: 0 0 20px #50deed12;
+}
+.xin-tech .ob-ip-directory-grid code {
+  color: var(--ob-accent);
+  font-size: 14px;
+}
+.xin-tech .ob-ip-directory-grid strong {
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.xin-tech .ob-ip-directory-grid span {
+  font-size: 10px;
+  color: var(--ob-muted);
+}
+@media (max-width: 760px) {
+  .xin-tech .ob-ip-directory-grid {
+    grid-template-columns: 1fr;
+  }
+}

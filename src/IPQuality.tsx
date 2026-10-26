@@ -25,6 +25,9 @@ function ReportCard({ report }: { report: IPReport }) {
         <div>
           <span className="ob-eyebrow">{report.source_name}</span>
           <h3>{report.ip}</h3>
+          {report.node_names?.length ? (
+            <p className="ob-hint">{report.node_names.join(" · ")}</p>
+          ) : null}
         </div>
         <span className="ob-report-kind">
           {report.collection === "page_snapshot"
@@ -111,7 +114,13 @@ function ReportCard({ report }: { report: IPReport }) {
     </article>
   );
 }
-export function IPQuality({ nodeName }: { nodeName?: string }) {
+export function IPQuality({
+  nodeName,
+  hideUnlinked = false,
+}: {
+  nodeName?: string;
+  hideUnlinked?: boolean;
+}) {
   const [reports, setReports] = useState<IPReport[]>(
     (snapshot as IPReportPayload).reports,
   );
@@ -134,6 +143,7 @@ export function IPQuality({ nodeName }: { nodeName?: string }) {
     return () => controller.abort();
   }, [revision]);
   const visible = linkedReports(reports, nodeName);
+  if (hideUnlinked && !visible.length) return null;
   return (
     <section className="ob-ip-panel ob-ip-reports">
       <div className="ob-section-title">
@@ -170,7 +180,9 @@ export function IPQuality({ nodeName }: { nodeName?: string }) {
             ))}
           </div>
           <p className="ob-hint">
-            目前收录你提供的 24.249.30.27。未根据节点名称推测它对应哪台服务器。
+            {nodeName
+              ? `此处仅展示已确认关联到 ${nodeName} 的 IP 报告。`
+              : "仅展示已收录的 IP；节点关联以确认的出口 IP 映射为准。"}
           </p>
           <div className="ob-source-grid ob-source-status">
             {reportSources

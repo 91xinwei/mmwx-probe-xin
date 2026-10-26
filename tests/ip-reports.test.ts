@@ -1,3 +1,5 @@
+import snapshot from "../src/data/ip-reports.json";
+import nodeMap from "../src/data/node-ip-map.json";
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
@@ -48,7 +50,7 @@ test("refresh only visits explicitly published IPs; failures preserve original r
   const payload = await loadIPReports(
     async (target) => {
       visited.push(target);
-      return input;
+      return { ...input, ip: target };
     },
     () => "2026-10-25T09:00:00Z",
   );
@@ -67,7 +69,10 @@ test("refresh only visits explicitly published IPs; failures preserve original r
   );
   const fallback = failed.reports.find((r) => r.source === "ip2location")!;
   assert.equal(fallback.refresh_status, "failed");
-  assert.equal(fallback.observed_at, "2026-10-25");
+  assert.equal(
+    fallback.observed_at,
+    snapshot.reports.find((r) => r.id === fallback.id)!.observed_at,
+  );
   assert.deepEqual(fallback.metrics, []);
 });
 test("source links require HTTPS and their own domain; reports cannot be attached to arbitrary nodes by name", async () => {
@@ -82,11 +87,27 @@ test("source links require HTTPS and their own domain; reports cannot be attache
     "https://other.example/",
   ])
     assert.equal(reportLink({ ...r, report_url: url }), undefined);
-  assert.equal(linkedReports(reports).length, 2);
-  assert.deepEqual(linkedReports(reports, "NOVIXLINK-美西-COX家宽"), []);
+  assert.equal(linkedReports(reports).length, snapshot.reports.length);
+  assert.equal(linkedReports(reports, "NOVIXLINK-美西-COX家宽").length, 2);
+  assert.deepEqual(linkedReports(reports, "unconfirmed-node"), []);
   assert.deepEqual(
     linkedReports([{ ...r, node_names: ["confirmed-node"] }], "confirmed-node"),
     [{ ...r, node_names: ["confirmed-node"] }],
   );
   assert.equal(metricText({ ...r.metrics[0], value: -1 }), "未获取");
+});
+
+test("every confirmed node keeps its own IP after API refresh and failure", async () => {
+  const refreshed = await loadIPReports(async (ip) => ({ ...input, ip }));
+  const failed = await loadIPReports(async () => {
+    throw new Error("offline");
+  });
+  assert.equal(nodeMap.length, 11);
+  for (const node of nodeMap) {
+    for (const payload of [refreshed, failed]) {
+      const matched = linkedReports(payload.reports, node.name);
+      assert.ok(matched.length > 0);
+      assert.ok(matched.every((r) => r.ip === node.ip));
+    }
+  }
 });
