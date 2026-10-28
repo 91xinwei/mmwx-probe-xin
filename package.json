@@ -20,7 +20,9 @@
     "preview": "vite preview",
     "deploy": "npm run build && wrangler deploy",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/*.test.ts tests/*.test.ts"
+    "test": "tsx --test src/*.test.ts tests/*.test.ts",
+    "refresh:ip": "tsx scripts/refresh-ip-reports.ts",
+    "prebuild": "npm run refresh:ip"
   },
   "dependencies": {
     "@simplewebauthn/browser": "^14.0.0",

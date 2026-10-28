@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { LockKeyhole, ExternalLink } from "lucide-react";
 import type { ProbeServer } from "./types";
+import { readOwnerJSON, ownerAccessMessage, OwnerAccessError } from "./owner-access";
 import { safeLink } from "./observatory-data";
 const cycles: Record<string, number> = {
   month: 1,
@@ -33,6 +34,7 @@ export function OwnerCosts({ isDemo }: { isDemo: boolean }) {
   const [status, setStatus] = useState<"loading" | "ok" | "locked" | "error">(
     "loading",
   );
+  const [accessMessage, setAccessMessage] = useState("");
   useEffect(() => {
     if (isDemo) {
       setServers([
@@ -60,19 +62,17 @@ export function OwnerCosts({ isDemo }: { isDemo: boolean }) {
       return;
     }
     const controller = new AbortController();
-    fetch("/api/owner/costs", { cache: "no-store", signal: controller.signal })
+    fetch("/api/owner/costs", { cache: "no-store", signal: controller.signal, redirect: "error" })
       .then(async (response) => {
-        if (response.status === 403) {
-          setStatus("locked");
-          return;
-        }
-        if (!response.ok) throw new Error();
-        const payload = (await response.json()) as { servers?: ProbeServer[] };
+        const payload = await readOwnerJSON<{ servers?: ProbeServer[] }>(response);
         setServers(payload.servers ?? []);
         setStatus("ok");
       })
       .catch((e) => {
-        if (e.name !== "AbortError") setStatus("error");
+        if (e.name !== "AbortError") {
+          setAccessMessage(ownerAccessMessage(e));
+          setStatus(e instanceof OwnerAccessError || e instanceof TypeError || import.meta.env.PROBE_READONLY_PREVIEW ? "locked" : "error");
+        }
       });
     return () => controller.abort();
   }, [isDemo]);
@@ -83,7 +83,7 @@ export function OwnerCosts({ isDemo }: { isDemo: boolean }) {
       <div className="ob-owner-lock">
         <LockKeyhole size={28} />
         <h2>成本与续费仅对所有者开放</h2>
-        <p>需要使用已授权的 Cloudflare Access 身份访问。</p>
+        <p>{accessMessage || "需要使用已授权的 Cloudflare Access 身份访问。"}</p>
         <a className="ob-action" href="/owner">
           验证所有者身份
         </a>

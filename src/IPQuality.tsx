@@ -5,7 +5,7 @@ import {
   linkedReports,
   metricText,
   reportLink,
-  reportSources,
+  hasReportData,
   type IPReport,
   type IPReportPayload,
 } from "./ip-reports";
@@ -75,7 +75,7 @@ function ReportCard({ report }: { report: IPReport }) {
           ],
           ...(report.attributes ?? []).map(a => [a.label, a.value]),
         ]
-          .filter(([, v]) => v !== undefined && v !== "")
+          .filter(([, v]) => v !== undefined && v !== "" && v !== "未提供")
           .map(([k, v]) => (
             <div key={k}>
               <dt>{k}</dt>
@@ -143,10 +143,7 @@ export function IPQuality({
       });
     return () => controller.abort();
   }, [revision]);
-  const visible = linkedReports(reports, nodeName).sort((a,b) => {
-    const usable = (r: IPReport) => r.observed_at && (r.geography || r.asn || r.organization || r.metrics.length) ? 1 : 0;
-    return usable(b) - usable(a);
-  });
+  const visible = linkedReports(reports, nodeName).filter(hasReportData);
   if (hideUnlinked && !visible.length) return null;
   return (
     <section className="ob-ip-panel ob-ip-reports">
@@ -188,20 +185,7 @@ export function IPQuality({
               ? `此处仅展示已确认关联到 ${nodeName} 的 IP 报告。`
               : "仅展示已收录的 IP；节点关联以确认的出口 IP 映射为准。"}
           </p>
-          <div className="ob-source-grid ob-source-status">
-            {reportSources
-              .filter((s) => !visible.some((r) => r.source === s.id))
-              .map((s) => (
-                <article key={s.id}>
-                  <h3>{s.name}</h3>
-                  <p>{s.description}</p>
-                  <strong>未获取结果</strong>
-                  <a href={s.url} target="_blank" rel="noopener noreferrer">
-                    访问查询入口 <ArrowUpRight size={12} />
-                  </a>
-                </article>
-              ))}
-          </div>
+
         </>
       )}
     </section>

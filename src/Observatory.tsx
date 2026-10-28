@@ -43,6 +43,7 @@ import {
 } from "./observatory-data";
 import { demo } from "./observatory-demo";
 import { PingChart } from "./ProbeCharts";
+import { readOwnerJSON } from "./owner-access";
 import { OwnerCosts } from "./OwnerCosts";
 import { IPQuality } from "./IPQuality";
 import nodeIPMap from "./data/node-ip-map.json";
@@ -480,10 +481,12 @@ export function Dashboard({
     if (isDemo) return;
     const controller = new AbortController();
     fetch("/api/owner/session", {
+      redirect: "error",
       cache: "no-store",
       signal: controller.signal,
     })
-      .then((r) => setOwner(r.ok))
+      .then((r) => readOwnerJSON<{owner?:boolean}>(r))
+      .then((result) => setOwner(result.owner === true))
       .catch(() => {});
     return () => controller.abort();
   }, [isDemo]);
@@ -585,9 +588,7 @@ export function Dashboard({
             ["network", "网络质量"],
             ["resources", "资源与流量"],
             ["ip", "IP 质量"],
-            ...(owner || isDemo || location.pathname === "/owner"
-              ? [["costs", isDemo ? "成本演示" : "成本与续费"]]
-              : []),
+            ["costs", isDemo ? "成本演示" : owner ? "成本与续费" : "成本与续费 · 仅所有者"],
           ].map(([key, label]) => (
             <button
               key={key}
@@ -986,7 +987,7 @@ export function Dashboard({
                           <div><dt>系统</dt><dd>{[s.os, s.arch].filter(Boolean).join(" · ") || "—"}</dd></div>
                           <div><dt>负载</dt><dd>{s.online ? s.loadavg ?? "—" : "—"}</dd></div>
                           <div><dt>在线时长</dt><dd>{s.online && s.uptime !== undefined ? `${Math.floor(s.uptime / 86400)}天 ${Math.floor(s.uptime % 86400 / 3600)}小时` : "—"}</dd></div>
-                          <div><dt>到期日期</dt><dd>{s.expires_at ? s.expires_at.slice(0, 10) : "—"}</dd></div>
+                          {(owner || isDemo) && <div><dt>到期日期</dt><dd>{s.expires_at ? s.expires_at.slice(0, 10) : "未填写"}</dd></div>}
                           <div><dt>周期上行</dt><dd>{size(s.traffic_used_up)}</dd></div>
                           <div><dt>周期下行</dt><dd>{size(s.traffic_used_down)}</dd></div>
                         </dl>

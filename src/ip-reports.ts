@@ -100,3 +100,7 @@ export function reportAge(report: IPReport, now = Date.now()) {
   const date = Date.parse(report.observed_at);
   return Number.isFinite(date) ? now - date : undefined;
 }
+
+export function hasReportData(report: IPReport): boolean {
+  return Boolean(report.observed_at && (report.geography || report.asn || report.organization || report.network || report.metrics.length || report.attributes?.some(a => a.value !== "未提供")));
+}

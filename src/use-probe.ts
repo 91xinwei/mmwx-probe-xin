@@ -5,6 +5,7 @@ import type {
   ProbeServer,
   ThemeName,
 } from "./types";
+import { readOwnerJSON } from "./owner-access";
 import { applyProbeDocumentBranding } from "./document-branding";
 import { normalizeColorMode, type ProbeColorMode } from "./theme-preference";
 
@@ -95,7 +96,7 @@ export function useProbe(includeOwnerCosts = true): {
           setOwnerCosts([]);
           return;
         }
-        const result = (await response.json()) as { servers?: ProbeServer[] };
+        const result = await readOwnerJSON<{ servers?: ProbeServer[] }>(response);
         if (!controller.signal.aborted) setOwnerCosts(result.servers ?? []);
       } catch {
         if (!controller.signal.aborted) setOwnerCosts([]);

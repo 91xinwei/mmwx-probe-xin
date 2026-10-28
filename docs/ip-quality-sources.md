@@ -78,3 +78,21 @@ Claude 页自动检测的是访问者当前出口，链接不包含节点深链�
 - 可选 Worker Secret `IPINFO_TOKEN`：配置后改用正式 `https://api.ipinfo.io/lite/{IP}`，Authorization Bearer 仅服务端使用，不写入 URL/前端/快照。免费 Lite 提供国家/洲与基础 ASN，不保证城市、时区或 VPN/代理/机房详情。匿名快照中的旧字段不会伪装成新的 Lite 实时返回字段。
 - 付费 IPinfo Core/Plus/Privacy 的检测能力需相应订阅，本轮未购买或声称已接通。参考 https://ipinfo.io/developers/lite-api 与 https://ipinfo.io/developers/ip-privacy-detection-api-data 。
 - 本地开发支持匿名 IPinfo 刷新；新版 IP 页面保留各来源单独报告和结果状态。
+
+## 每次发布的资料更新（2026-10-28）
+
+`npm run build` 的 `prebuild` 自动运行 `npm run refresh:ip`，包含 GitHub CI、Cloudflare 的标准构建命令以及本地 `npm run deploy`。脚本只查询已登记公开节点，最多 3 个并发，超时后保留已有报告与原观测时间；不阻断其余节点或发布。结果写入构建使用的 `src/data/ip-reports.json`，不会自动提交回 Git。需要离线构建时设置 `IP_REPORTS_SKIP_REFRESH=1`。
+
+本轮发布刷新实测 11/11 成功。有 `IPINFO_TOKEN` 时使用正式 Lite；无 token 使用已验证可用的匿名查询，仍可能限流，不承诺永远可用。本地 Node 不采用系统代理时，匿名查询回退 curl；凭据不进入命令参数、报告或日志。
+
+| 信息 | 刷新方式 | 能力边界 |
+| --- | --- | --- |
+| IP 地区、ASN、网络机构、主机名、时区、邮编、Anycast | 每次构建刷新 IPinfo，线上报告接口也可刷新 | 仅显示实际返回字段；Lite 不保证城市等细节 |
+| IP2Location 基础归属 | 线上报告接口现有刷新 | 未授权套餐字段不推断 |
+| Net.Coffee 现有有效评分 | 线上报告接口核验后刷新 | 源返回不同 IP 时拒绝，不作为发布必需来源 |
+| CPU、内存、磁盘、速率、连接、三网 | 原有 API/WebSocket 实时更新 | 不在构建期固化为实时值 |
+| VPS 成本、套餐、到期、续费 | owner 登录后私有接口更新 | 不写入公开构建文件，需要 Access 认证和主控已有字段 |
+| 住宅属性、VPN/Tor、风险/信任评分 | 只有来源实际提供才显示 | 不用基础 ASN 推断，不合成“纯净度” |
+| 付款历史、实际代理出口、浏览器指纹、DNS/WebRTC | 当前无逐节点有效来源 | 不展示为节点检测结果 |
+
+IP 页面仅展示带观测时间和有效字段的报告，隐藏空失败报告、未提供属性和未接入来源占位。成功取得过的旧数据可保留，更新失败仍注明，绝不刷新伪时间。
