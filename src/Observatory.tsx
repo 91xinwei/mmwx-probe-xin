@@ -44,6 +44,7 @@ import {
 import { demo } from "./observatory-demo";
 import { PingChart } from "./ProbeCharts";
 import { readOwnerJSON } from "./owner-access";
+import { CommandHero } from "./CommandHero";
 import { OwnerCosts } from "./OwnerCosts";
 import { IPQuality } from "./IPQuality";
 import nodeIPMap from "./data/node-ip-map.json";
@@ -462,7 +463,6 @@ export function Dashboard({
   const [list, setList] = useState(false);
   const [dark, setDark] = useState(tech);
   const [spinning, setSpinning] = useState(true);
-  const [showGlobe, setShowGlobe] = useState(!tech);
   const [selected, setSelected] = useState<{
     index: number;
     name?: string;
@@ -530,7 +530,7 @@ export function Dashboard({
       ? servers[selected.index]
       : undefined;
   return (
-    <div className={`observatory ob-v2 ${dark ? "ob-dark" : ""}`}>
+    <div className={`observatory ob-v2 ob-page-${page} ${dark ? "ob-dark" : ""}`}>
       <header className="ob-header">
         <a href={isDemo ? "?demo=1" : "/"} className="ob-brand">
           <span className="ob-logo">
@@ -629,6 +629,7 @@ export function Dashboard({
           <IPQuality />
         ) : (
           <>
+            {tech && page === "overview" && <CommandHero data={payload} updatedAt={updatedAt} isDemo={isDemo}/>}
             <section className="ob-v2-stats">
               {[
                 {
@@ -664,13 +665,7 @@ export function Dashboard({
                 </article>
               ))}
             </section>
-            {page === "overview" && tech && (
-              <button className="ob-globe-toggle" onClick={() => setShowGlobe(!showGlobe)} aria-expanded={showGlobe}>
-                <Globe2 size={16} /> 全球节点分布 · {regions.length} 个地区
-                <span>{showGlobe ? "收起地球与资源总览 −" : "展开地球与资源总览 +"}</span>
-              </button>
-            )}
-            {page === "overview" && showGlobe && (
+            {page === "overview" && !tech && (
               <section className="ob-earth-panel">
                 <div className="ob-earth-map">
                   <div className="ob-section-title">
@@ -981,7 +976,7 @@ export function Dashboard({
                         </>
                       )}
                       {tech && page !== "network" && (
-                        <dl className="ob-node-facts">
+                        <details className="command-node-more"><summary>IP、规格与系统资料</summary><dl className="ob-node-facts">
                           <div><dt>内存</dt><dd>{s.online ? size(s.mem_used) : "—"} / {size(s.mem_total)}</dd></div>
                           <div><dt>磁盘</dt><dd>{s.online ? size(s.disk_used) : "—"} / {size(s.disk_total)}</dd></div>
                           <div><dt>系统</dt><dd>{[s.os, s.arch].filter(Boolean).join(" · ") || "—"}</dd></div>
@@ -990,7 +985,7 @@ export function Dashboard({
                           {(owner || isDemo) && <div><dt>到期日期</dt><dd>{s.expires_at ? s.expires_at.slice(0, 10) : "未填写"}</dd></div>}
                           <div><dt>周期上行</dt><dd>{size(s.traffic_used_up)}</dd></div>
                           <div><dt>周期下行</dt><dd>{size(s.traffic_used_down)}</dd></div>
-                        </dl>
+                        </dl></details>
                       )}
                       {tech && (owner || isDemo) && (s.renewal_price !== undefined || s.renewal_price_cny !== undefined || s.renewal_cycle) && (
                         <div className="ob-owner-renewal">
