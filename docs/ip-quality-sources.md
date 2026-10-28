@@ -55,3 +55,26 @@ API：https://api.ip2location.io/?ip={ip} ，支持指定IPv4/IPv6；可按文�
 `/api/ip-reports` 查询 IP2Location.io 的已收录 IP，成功缓存一小时，失败保留原快照及原时间、短缓存一分钟。可选 Worker secret `IP2LOCATION_API_KEY` 用于官方 API；无密钥时只展示官方返回的基本信息，未返回的评分不会补零。IPPure、Net.Coffee 暂时显示查询入口和未取得结果。
 
 新增报告在 `src/data/ip-reports.json` 配置；只查询显式收录地址，不提供任意 IP 代理。节点关联必须通过 `node_names` 显式填写，未关联的报告只出现在独立报告区。此变更尚未部署到线上 Worker。
+
+## Net.Coffee Claude IP 接入（2026-10-28）
+
+用户明确要求全部已关联节点接入 https://ip.net.coffee/claude/ 。阅读该页自身公开脚本 `/claude/claude-page.js?v=20260916a`，确认网页使用 `/api/iprisk/{IP}` 读取 trust_score、地理、ASN、住宅/机房、VPN/代理/Tor/爬虫/滥用等字段。以 8.8.8.8 实测响应。此为网页使用的接口，尚未发现版本化 API 文档或 SLA，不能承诺长期稳定。
+
+已对全部 11 个登记节点进行一次查询；仅 1 个返回地址匹配的有效数据，其他查询失败或返回不同地址。不得将源站返回的其他 IP 的分数重新标注到请求 IP：接入严格校验响应 IP，不匹配则保留旧快照或显示未取得结果。全部 11 个有报告与状态，只有已验证结果有分数。
+
+`worker/ip-reports.ts` 增加 Net.Coffee 适配器，生产刷新与原 IP2Location 一同使用服务端一小时缓存（v3）；本地开发只读适配器同步接入。分数保留原名与方向，说明为 Net.Coffee 评价，非 Anthropic 官方评分或服务可用保证。未知布尔值显示未提供，不转为否。报告覆盖来源实际返回的网络属性、安全标记、时区、反向 DNS、RPKI 和原始滥用指标；不执行页面脚本、不上传浏览器会话。
+
+Claude 页自动检测的是访问者当前出口，链接不包含节点深链参数；来源按钮明确写“打开原站自测”。DNS/WebRTC/指纹和客户端连通性不是远程 VPS 查询结果，不纳入节点报告。登记 IP 取自主控地址，尚未独立核验为代理实际出口。
+
+用户确认 owner 限制仅用于 VPS 成本、套餐周期、到期与续费，而非 IP 报告。新版补充 owner 专属套餐与续费摘要；公开接口继续剔除敏感续费字段。
+
+## IPinfo 指定 IP 查询落地（2026-10-28）
+
+用户要求寻找 IPinfo 等替代方式。核查官方 Lite / Privacy 文档后，实测 `https://ipinfo.io/{IP}/json` 匿名端点可用；对全部 11 个登记节点逐一查询，11/11 返回 IP 精确匹配的资料。已保存真实返回的 IPinfo 快照、来源与查询时间，不替代或伪造 Net.Coffee 分数。
+
+- 基础字段：按实际响应展示国家/地区/城市、ASN、网络机构、主机名、IP 时区、邮编、Anycast 等。它们不是住宅真实性或 Claude 可用性的验证。
+- `worker/ipinfo.ts` 统一解析匿名和 Lite 数据，验证响应 IP、error、bogon；没有显式返回的 VPN/代理等标记不补为 false，不构造综合分。
+- 生产 IP 报告增加 IPinfo 查询、v4 一小时缓存与失败保留快照。匿名端点属于限流的非认证能力，不承诺额度或持续可用性。
+- 可选 Worker Secret `IPINFO_TOKEN`：配置后改用正式 `https://api.ipinfo.io/lite/{IP}`，Authorization Bearer 仅服务端使用，不写入 URL/前端/快照。免费 Lite 提供国家/洲与基础 ASN，不保证城市、时区或 VPN/代理/机房详情。匿名快照中的旧字段不会伪装成新的 Lite 实时返回字段。
+- 付费 IPinfo Core/Plus/Privacy 的检测能力需相应订阅，本轮未购买或声称已接通。参考 https://ipinfo.io/developers/lite-api 与 https://ipinfo.io/developers/ip-privacy-detection-api-data 。
+- 本地开发支持匿名 IPinfo 刷新；新版 IP 页面保留各来源单独报告和结果状态。

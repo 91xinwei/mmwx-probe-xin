@@ -72,7 +72,9 @@ export function saveColorModePreference(mode: ProbeColorMode) {
   }
 }
 
-export function useProbe(includeOwnerCosts = location.pathname === "/owner"): {
+// Authentication is enforced by the owner API, not by the current page path.
+// A signed-in owner must retain costs when switching back to the classic home.
+export function useProbe(includeOwnerCosts = true): {
   data?: ProbePayload;
   error?: string;
   updatedAt?: number;

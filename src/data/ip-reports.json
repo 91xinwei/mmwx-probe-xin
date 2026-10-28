@@ -1,6 +1,331 @@
 {
   "reports": [
     {
+      "id": "ipinfo-144.34.229.228",
+      "ip": "144.34.229.228",
+      "source": "ipinfo",
+      "source_name": "IPinfo",
+      "report_url": "https://ipinfo.io/144.34.229.228",
+      "observed_at": "2026-10-28T15:10:17.921Z",
+      "collection": "api",
+      "geography": "US · California · Los Angeles",
+      "asn": "AS25820",
+      "organization": "IT7 Networks Inc",
+      "attributes": [
+        {
+          "label": "主机名",
+          "value": "144.34.229.228.16clouds.com"
+        },
+        {
+          "label": "IP 时区",
+          "value": "America/Los_Angeles"
+        },
+        {
+          "label": "邮编",
+          "value": "90014"
+        }
+      ],
+      "metrics": [],
+      "refresh_status": "ok",
+      "node_names": [
+        "BWG-MEGABOX-美西"
+      ]
+    },
+    {
+      "id": "ipinfo-179.255.159.69",
+      "ip": "179.255.159.69",
+      "source": "ipinfo",
+      "source_name": "IPinfo",
+      "report_url": "https://ipinfo.io/179.255.159.69",
+      "observed_at": "2026-10-28T15:10:17.921Z",
+      "collection": "api",
+      "geography": "US · California · Los Angeles",
+      "asn": "AS906",
+      "organization": "DMIT Cloud Services",
+      "attributes": [
+        {
+          "label": "主机名",
+          "value": "host-by.dmit.com"
+        },
+        {
+          "label": "IP 时区",
+          "value": "America/Los_Angeles"
+        },
+        {
+          "label": "邮编",
+          "value": "90017"
+        }
+      ],
+      "metrics": [],
+      "refresh_status": "ok",
+      "node_names": [
+        "DMIT-CORONA-美西"
+      ]
+    },
+    {
+      "id": "ipinfo-179.255.121.190",
+      "ip": "179.255.121.190",
+      "source": "ipinfo",
+      "source_name": "IPinfo",
+      "report_url": "https://ipinfo.io/179.255.121.190",
+      "observed_at": "2026-10-28T15:10:17.921Z",
+      "collection": "api",
+      "geography": "US · California · Los Angeles",
+      "asn": "AS906",
+      "organization": "DMIT Cloud Services",
+      "attributes": [
+        {
+          "label": "主机名",
+          "value": "host-by.dmit.com"
+        },
+        {
+          "label": "IP 时区",
+          "value": "America/Los_Angeles"
+        },
+        {
+          "label": "邮编",
+          "value": "90017"
+        }
+      ],
+      "metrics": [],
+      "refresh_status": "ok",
+      "node_names": [
+        "DMIT-PRO-TINY-美西"
+      ]
+    },
+    {
+      "id": "ipinfo-207.57.142.77",
+      "ip": "207.57.142.77",
+      "source": "ipinfo",
+      "source_name": "IPinfo",
+      "report_url": "https://ipinfo.io/207.57.142.77",
+      "observed_at": "2026-10-28T15:10:17.921Z",
+      "collection": "api",
+      "geography": "US · California · Los Angeles",
+      "asn": "AS1054",
+      "organization": "Zont LLC",
+      "attributes": [
+        {
+          "label": "IP 时区",
+          "value": "America/Los_Angeles"
+        },
+        {
+          "label": "邮编",
+          "value": "90013"
+        }
+      ],
+      "metrics": [],
+      "refresh_status": "ok",
+      "node_names": [
+        "VMISS-TRI-美西"
+      ]
+    },
+    {
+      "id": "ipinfo-64.83.37.162",
+      "ip": "64.83.37.162",
+      "source": "ipinfo",
+      "source_name": "IPinfo",
+      "report_url": "https://ipinfo.io/64.83.37.162",
+      "observed_at": "2026-10-28T15:10:17.921Z",
+      "collection": "api",
+      "geography": "JP · Tokyo · Tokyo",
+      "asn": "AS979",
+      "organization": "NetLab Global",
+      "attributes": [
+        {
+          "label": "IP 时区",
+          "value": "Asia/Tokyo"
+        },
+        {
+          "label": "邮编",
+          "value": "101-8656"
+        }
+      ],
+      "metrics": [],
+      "refresh_status": "ok",
+      "node_names": [
+        "VMISS-JP-日本"
+      ]
+    },
+    {
+      "id": "ipinfo-185.49.33.118",
+      "ip": "185.49.33.118",
+      "source": "ipinfo",
+      "source_name": "IPinfo",
+      "report_url": "https://ipinfo.io/185.49.33.118",
+      "observed_at": "2026-10-28T15:10:17.921Z",
+      "collection": "api",
+      "geography": "GB · England · London",
+      "asn": "AS3214",
+      "organization": "xTom GmbH",
+      "attributes": [
+        {
+          "label": "主机名",
+          "value": "s62406.vps.hosting"
+        },
+        {
+          "label": "IP 时区",
+          "value": "Europe/London"
+        },
+        {
+          "label": "邮编",
+          "value": "WC2N"
+        }
+      ],
+      "metrics": [],
+      "refresh_status": "ok",
+      "node_names": [
+        "V.PS-伦敦"
+      ]
+    },
+    {
+      "id": "ipinfo-47.178.15.91",
+      "ip": "47.178.15.91",
+      "source": "ipinfo",
+      "source_name": "IPinfo",
+      "report_url": "https://ipinfo.io/47.178.15.91",
+      "observed_at": "2026-10-28T15:10:17.921Z",
+      "collection": "api",
+      "geography": "US · California · San Bernardino",
+      "asn": "AS5650",
+      "organization": "Verizon Business",
+      "attributes": [
+        {
+          "label": "主机名",
+          "value": "47-178-15-91.static.ccmn.ca.ip.frontiernet.net"
+        },
+        {
+          "label": "IP 时区",
+          "value": "America/Los_Angeles"
+        },
+        {
+          "label": "邮编",
+          "value": "92401"
+        }
+      ],
+      "metrics": [],
+      "refresh_status": "ok",
+      "node_names": [
+        "AAITR-VERIZON-美西"
+      ]
+    },
+    {
+      "id": "ipinfo-5.231.26.76",
+      "ip": "5.231.26.76",
+      "source": "ipinfo",
+      "source_name": "IPinfo",
+      "report_url": "https://ipinfo.io/5.231.26.76",
+      "observed_at": "2026-10-28T15:10:17.921Z",
+      "collection": "api",
+      "geography": "DE · Hesse · Frankfurt am Main",
+      "asn": "AS44486",
+      "organization": "synlinq.de",
+      "attributes": [
+        {
+          "label": "IP 时区",
+          "value": "Europe/Berlin"
+        },
+        {
+          "label": "邮编",
+          "value": "60306"
+        }
+      ],
+      "metrics": [],
+      "refresh_status": "ok",
+      "node_names": [
+        "BERO-德国法兰克福"
+      ]
+    },
+    {
+      "id": "ipinfo-24.249.30.27",
+      "ip": "24.249.30.27",
+      "source": "ipinfo",
+      "source_name": "IPinfo",
+      "report_url": "https://ipinfo.io/24.249.30.27",
+      "observed_at": "2026-10-28T15:10:17.921Z",
+      "collection": "api",
+      "geography": "US · Nevada · Las Vegas",
+      "asn": "AS22773",
+      "organization": "Cox Communications Inc.",
+      "attributes": [
+        {
+          "label": "主机名",
+          "value": "wsip-24-249-30-27.lv.lv.cox.net"
+        },
+        {
+          "label": "IP 时区",
+          "value": "America/Los_Angeles"
+        },
+        {
+          "label": "邮编",
+          "value": "89158"
+        }
+      ],
+      "metrics": [],
+      "refresh_status": "ok",
+      "node_names": [
+        "NOVIXLINK-美西-COX家宽"
+      ]
+    },
+    {
+      "id": "ipinfo-209.240.165.74",
+      "ip": "209.240.165.74",
+      "source": "ipinfo",
+      "source_name": "IPinfo",
+      "report_url": "https://ipinfo.io/209.240.165.74",
+      "observed_at": "2026-10-28T15:10:17.921Z",
+      "collection": "api",
+      "geography": "US · Texas · Odessa",
+      "asn": "AS11238",
+      "organization": "NetWest Online, Inc.",
+      "attributes": [
+        {
+          "label": "IP 时区",
+          "value": "America/Chicago"
+        },
+        {
+          "label": "邮编",
+          "value": "79769"
+        }
+      ],
+      "metrics": [],
+      "refresh_status": "ok",
+      "node_names": [
+        "blossom-netwest美西家宽"
+      ]
+    },
+    {
+      "id": "ipinfo-154.21.92.184",
+      "ip": "154.21.92.184",
+      "source": "ipinfo",
+      "source_name": "IPinfo",
+      "report_url": "https://ipinfo.io/154.21.92.184",
+      "observed_at": "2026-10-28T15:10:17.921Z",
+      "collection": "api",
+      "geography": "US · California · Los Angeles",
+      "asn": "AS906",
+      "organization": "DMIT Cloud Services",
+      "attributes": [
+        {
+          "label": "主机名",
+          "value": "host-by.dmit.com"
+        },
+        {
+          "label": "IP 时区",
+          "value": "America/Los_Angeles"
+        },
+        {
+          "label": "邮编",
+          "value": "90017"
+        }
+      ],
+      "metrics": [],
+      "refresh_status": "ok",
+      "node_names": [
+        "Dmit-Malibu-美西"
+      ]
+    },
+    {
       "id": "iplense-24.249.30.27",
       "ip": "24.249.30.27",
       "source": "iplense",
@@ -13,7 +338,10 @@
       "asn": "AS22773",
       "organization": "Cox Communications Inc.",
       "network": "24.249.24.0/21",
-      "tags": ["原生", "家宽"],
+      "tags": [
+        "原生",
+        "家宽"
+      ],
       "metrics": [
         {
           "label": "综合评分",
@@ -34,7 +362,9 @@
         "human": 76.09,
         "automated": 23.91
       },
-      "node_names": ["NOVIXLINK-美西-COX家宽"]
+      "node_names": [
+        "NOVIXLINK-美西-COX家宽"
+      ]
     },
     {
       "id": "ip2location-144.34.229.228",
@@ -44,7 +374,9 @@
       "report_url": "https://www.ip2location.io/144.34.229.228",
       "observed_at": "2026-10-25T23:47:41.980014+00:00",
       "collection": "api",
-      "node_names": ["BWG-MEGABOX-美西"],
+      "node_names": [
+        "BWG-MEGABOX-美西"
+      ],
       "metrics": [],
       "geography": "United States of America · California · Los Angeles",
       "asn": "AS25820",
@@ -60,7 +392,9 @@
       "report_url": "https://www.ip2location.io/179.255.159.69",
       "observed_at": "2026-10-26",
       "collection": "api",
-      "node_names": ["DMIT-CORONA-美西"],
+      "node_names": [
+        "DMIT-CORONA-美西"
+      ],
       "metrics": [],
       "refresh_status": "failed"
     },
@@ -72,7 +406,9 @@
       "report_url": "https://www.ip2location.io/179.255.121.190",
       "observed_at": "2026-10-25T23:47:41.980014+00:00",
       "collection": "api",
-      "node_names": ["DMIT-PRO-TINY-美西"],
+      "node_names": [
+        "DMIT-PRO-TINY-美西"
+      ],
       "metrics": [],
       "geography": "United States of America · California · Los Angeles",
       "asn": "AS906",
@@ -88,7 +424,9 @@
       "report_url": "https://www.ip2location.io/207.57.142.77",
       "observed_at": "2026-10-25T23:47:41.980014+00:00",
       "collection": "api",
-      "node_names": ["VMISS-TRI-美西"],
+      "node_names": [
+        "VMISS-TRI-美西"
+      ],
       "metrics": [],
       "geography": "Australia · New South Wales · Sydney",
       "asn": "AS1054",
@@ -104,7 +442,9 @@
       "report_url": "https://www.ip2location.io/64.83.37.162",
       "observed_at": "2026-10-25T23:47:41.980014+00:00",
       "collection": "api",
-      "node_names": ["VMISS-JP-日本"],
+      "node_names": [
+        "VMISS-JP-日本"
+      ],
       "metrics": [],
       "geography": "Japan · Tokyo · Tokyo",
       "asn": "AS979",
@@ -120,7 +460,9 @@
       "report_url": "https://www.ip2location.io/185.49.33.118",
       "observed_at": "2026-10-25T23:47:41.980014+00:00",
       "collection": "api",
-      "node_names": ["V.PS-伦敦"],
+      "node_names": [
+        "V.PS-伦敦"
+      ],
       "metrics": [],
       "geography": "United Kingdom of Great Britain and Northern Ireland · England · London",
       "asn": "AS3214",
@@ -136,7 +478,9 @@
       "report_url": "https://www.ip2location.io/47.178.15.91",
       "observed_at": "2026-10-25T23:47:41.980014+00:00",
       "collection": "api",
-      "node_names": ["AAITR-VERIZON-美西"],
+      "node_names": [
+        "AAITR-VERIZON-美西"
+      ],
       "metrics": [],
       "geography": "United States of America · California · El Segundo",
       "asn": "AS5650",
@@ -152,7 +496,9 @@
       "report_url": "https://www.ip2location.io/5.231.26.76",
       "observed_at": "2026-10-25T23:47:41.980014+00:00",
       "collection": "api",
-      "node_names": ["BERO-德国法兰克福"],
+      "node_names": [
+        "BERO-德国法兰克福"
+      ],
       "metrics": [],
       "geography": "Germany · Bayern · Soden",
       "asn": "AS44486",
@@ -168,7 +514,9 @@
       "report_url": "https://www.ip2location.io/24.249.30.27",
       "observed_at": "2026-10-25T23:47:41.980014+00:00",
       "collection": "api",
-      "node_names": ["NOVIXLINK-美西-COX家宽"],
+      "node_names": [
+        "NOVIXLINK-美西-COX家宽"
+      ],
       "metrics": [],
       "geography": "United States of America · Nevada · Las Vegas",
       "asn": "AS22773",
@@ -184,7 +532,9 @@
       "report_url": "https://www.ip2location.io/209.240.165.74",
       "observed_at": "2026-10-25T23:47:41.980014+00:00",
       "collection": "api",
-      "node_names": ["blossom-netwest美西家宽"],
+      "node_names": [
+        "blossom-netwest美西家宽"
+      ],
       "metrics": [],
       "geography": "United States of America · Texas · Odessa",
       "asn": "AS11238",
@@ -200,13 +550,250 @@
       "report_url": "https://www.ip2location.io/154.21.92.184",
       "observed_at": "2026-10-25T23:47:41.980014+00:00",
       "collection": "api",
-      "node_names": ["Dmit-Malibu-美西"],
+      "node_names": [
+        "Dmit-Malibu-美西"
+      ],
       "metrics": [],
       "geography": "United States of America · California · Los Angeles",
       "asn": "AS906",
       "organization": "DMIT Cloud Services",
       "refresh_status": "ok",
       "is_proxy": false
+    },
+    {
+      "id": "netcoffee-144.34.229.228",
+      "ip": "144.34.229.228",
+      "source": "netcoffee",
+      "source_name": "Net.Coffee · Claude IP",
+      "report_url": "https://ip.net.coffee/claude/",
+      "observed_at": "",
+      "collection": "api",
+      "node_names": [
+        "BWG-MEGABOX-美西"
+      ],
+      "metrics": [],
+      "refresh_status": "failed",
+      "refresh_error": "查询失败或来源返回不同 IP，未采用评分"
+    },
+    {
+      "id": "netcoffee-179.255.159.69",
+      "ip": "179.255.159.69",
+      "source": "netcoffee",
+      "source_name": "Net.Coffee · Claude IP",
+      "report_url": "https://ip.net.coffee/claude/",
+      "observed_at": "",
+      "collection": "api",
+      "node_names": [
+        "DMIT-CORONA-美西"
+      ],
+      "metrics": [],
+      "refresh_status": "failed",
+      "refresh_error": "查询失败或来源返回不同 IP，未采用评分"
+    },
+    {
+      "id": "netcoffee-179.255.121.190",
+      "ip": "179.255.121.190",
+      "source": "netcoffee",
+      "source_name": "Net.Coffee · Claude IP",
+      "report_url": "https://ip.net.coffee/claude/",
+      "observed_at": "",
+      "collection": "api",
+      "node_names": [
+        "DMIT-PRO-TINY-美西"
+      ],
+      "metrics": [],
+      "refresh_status": "failed",
+      "refresh_error": "查询失败或来源返回不同 IP，未采用评分"
+    },
+    {
+      "id": "netcoffee-207.57.142.77",
+      "ip": "207.57.142.77",
+      "source": "netcoffee",
+      "source_name": "Net.Coffee · Claude IP",
+      "report_url": "https://ip.net.coffee/claude/",
+      "observed_at": "",
+      "collection": "api",
+      "node_names": [
+        "VMISS-TRI-美西"
+      ],
+      "metrics": [],
+      "refresh_status": "failed",
+      "refresh_error": "查询失败或来源返回不同 IP，未采用评分"
+    },
+    {
+      "id": "netcoffee-64.83.37.162",
+      "ip": "64.83.37.162",
+      "source": "netcoffee",
+      "source_name": "Net.Coffee · Claude IP",
+      "report_url": "https://ip.net.coffee/claude/",
+      "observed_at": "",
+      "collection": "api",
+      "node_names": [
+        "VMISS-JP-日本"
+      ],
+      "metrics": [],
+      "refresh_status": "failed",
+      "refresh_error": "查询失败或来源返回不同 IP，未采用评分"
+    },
+    {
+      "id": "netcoffee-185.49.33.118",
+      "ip": "185.49.33.118",
+      "source": "netcoffee",
+      "source_name": "Net.Coffee · Claude IP",
+      "report_url": "https://ip.net.coffee/claude/",
+      "observed_at": "",
+      "collection": "api",
+      "node_names": [
+        "V.PS-伦敦"
+      ],
+      "metrics": [],
+      "refresh_status": "failed",
+      "refresh_error": "查询失败或来源返回不同 IP，未采用评分"
+    },
+    {
+      "id": "netcoffee-47.178.15.91",
+      "ip": "47.178.15.91",
+      "source": "netcoffee",
+      "source_name": "Net.Coffee · Claude IP",
+      "report_url": "https://ip.net.coffee/claude/",
+      "observed_at": "",
+      "collection": "api",
+      "node_names": [
+        "AAITR-VERIZON-美西"
+      ],
+      "metrics": [],
+      "refresh_status": "failed",
+      "refresh_error": "查询失败或来源返回不同 IP，未采用评分"
+    },
+    {
+      "id": "netcoffee-5.231.26.76",
+      "ip": "5.231.26.76",
+      "source": "netcoffee",
+      "source_name": "Net.Coffee · Claude IP",
+      "report_url": "https://ip.net.coffee/claude/",
+      "observed_at": "",
+      "collection": "api",
+      "node_names": [
+        "BERO-德国法兰克福"
+      ],
+      "metrics": [],
+      "refresh_status": "failed",
+      "refresh_error": "查询失败或来源返回不同 IP，未采用评分"
+    },
+    {
+      "id": "netcoffee-24.249.30.27",
+      "ip": "24.249.30.27",
+      "source": "netcoffee",
+      "source_name": "Net.Coffee · Claude IP",
+      "report_url": "https://ip.net.coffee/claude/",
+      "observed_at": "2026-10-28T15:04:43.557Z",
+      "collection": "api",
+      "geography": "United States · Nevada · Las Vegas",
+      "asn": "AS22773",
+      "organization": "Cox Communications Inc.",
+      "network": "24.249.30.0/24",
+      "is_proxy": false,
+      "attributes": [
+        {
+          "label": "住宅属性",
+          "value": "是"
+        },
+        {
+          "label": "广播属性",
+          "value": "未提供"
+        },
+        {
+          "label": "数据中心",
+          "value": "否"
+        },
+        {
+          "label": "VPN",
+          "value": "否"
+        },
+        {
+          "label": "代理",
+          "value": "否"
+        },
+        {
+          "label": "Tor",
+          "value": "否"
+        },
+        {
+          "label": "爬虫",
+          "value": "否"
+        },
+        {
+          "label": "滥用记录",
+          "value": "否"
+        },
+        {
+          "label": "移动网络",
+          "value": "否"
+        },
+        {
+          "label": "IP 时区",
+          "value": "America/Los_Angeles"
+        },
+        {
+          "label": "机构类型",
+          "value": "isp"
+        },
+        {
+          "label": "来源滥用指标",
+          "value": "0.002 (Low)"
+        },
+        {
+          "label": "反向 DNS",
+          "value": "wsip-24-249-30-27.lv.lv.cox.net"
+        },
+        {
+          "label": "RPKI 状态",
+          "value": "invalid"
+        }
+      ],
+      "metrics": [
+        {
+          "label": "Claude IP 信任分",
+          "value": 100,
+          "maximum": 100,
+          "direction": "higher_is_better",
+          "description": "Net.Coffee 评分，不代表 Anthropic 官方评估或可用性保证。"
+        }
+      ],
+      "refresh_status": "ok",
+      "node_names": [
+        "NOVIXLINK-美西-COX家宽"
+      ]
+    },
+    {
+      "id": "netcoffee-209.240.165.74",
+      "ip": "209.240.165.74",
+      "source": "netcoffee",
+      "source_name": "Net.Coffee · Claude IP",
+      "report_url": "https://ip.net.coffee/claude/",
+      "observed_at": "",
+      "collection": "api",
+      "node_names": [
+        "blossom-netwest美西家宽"
+      ],
+      "metrics": [],
+      "refresh_status": "failed",
+      "refresh_error": "查询失败或来源返回不同 IP，未采用评分"
+    },
+    {
+      "id": "netcoffee-154.21.92.184",
+      "ip": "154.21.92.184",
+      "source": "netcoffee",
+      "source_name": "Net.Coffee · Claude IP",
+      "report_url": "https://ip.net.coffee/claude/",
+      "observed_at": "",
+      "collection": "api",
+      "node_names": [
+        "Dmit-Malibu-美西"
+      ],
+      "metrics": [],
+      "refresh_status": "failed",
+      "refresh_error": "查询失败或来源返回不同 IP，未采用评分"
     }
   ]
 }

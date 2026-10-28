@@ -45,6 +45,12 @@ export default defineConfig(({ mode, command }) => {
                         { maxBuffer: 1024 * 1024 },
                       );
                       return JSON.parse(stdout);
+                    }, undefined, async (ip) => {
+                      const { stdout } = await runFile("curl", ["-fsS", "--max-time", "12", `https://ip.net.coffee/api/iprisk/${encodeURIComponent(ip)}`], { maxBuffer: 1024 * 1024 });
+                      return JSON.parse(stdout);
+                    }, async ip => {
+                      const {stdout}=await runFile("curl",["-fsS","--max-time","12",`https://ipinfo.io/${encodeURIComponent(ip)}/json`],{maxBuffer:1024*1024});
+                      return JSON.parse(stdout);
                     });
                     response.end(JSON.stringify(payload));
                     return;

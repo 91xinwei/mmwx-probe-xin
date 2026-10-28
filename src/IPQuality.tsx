@@ -55,9 +55,7 @@ function ReportCard({ report }: { report: IPReport }) {
             </div>
           ))
         ) : (
-          <p className="ob-hint">
-            此来源未提供风险评分，以下为已取得的 IP 信息。
-          </p>
+          <p className="ob-hint">地区、网络归属与属性以此来源实际返回为准。</p>
         )}
       </div>
       <dl className="ob-report-facts">
@@ -75,6 +73,7 @@ function ReportCard({ report }: { report: IPReport }) {
                 ? "该来源标记为代理"
                 : "该来源未标记为公开代理",
           ],
+          ...(report.attributes ?? []).map(a => [a.label, a.value]),
         ]
           .filter(([, v]) => v !== undefined && v !== "")
           .map(([k, v]) => (
@@ -84,6 +83,8 @@ function ReportCard({ report }: { report: IPReport }) {
             </div>
           ))}
       </dl>
+      {report.refresh_error && <p className="ob-report-warning">{report.refresh_error}</p>}
+      {report.source === "netcoffee" && <p className="ob-hint">此报告查询主控登记的节点地址，尚未验证为代理实际出口。原站入口检测当前访问网络；DNS、WebRTC、浏览器指纹和 Claude 连通性不属于本节点查询结果。</p>}
       {report.asn_traffic && (
         <div className="ob-asn-traffic">
           <span>ASN 级流量构成</span>
@@ -103,11 +104,11 @@ function ReportCard({ report }: { report: IPReport }) {
           {report.collection === "api" && report.observed_at.length > 10
             ? "（北京时间）"
             : ""}
-          {report.refresh_status === "failed" && <b>更新失败 · 保留快照</b>}
+          {report.refresh_status === "failed" && <b>{report.observed_at ? "更新失败 · 保留快照" : "查询失败 · 未取得结果"}</b>}
         </span>
         {url && (
           <a href={url} target="_blank" rel="noopener noreferrer">
-            查看原站结果 <ArrowUpRight size={13} />
+            {report.source === "netcoffee" ? "打开原站自测" : "查看原站结果"} <ArrowUpRight size={13} />
           </a>
         )}
       </div>
@@ -142,13 +143,16 @@ export function IPQuality({
       });
     return () => controller.abort();
   }, [revision]);
-  const visible = linkedReports(reports, nodeName);
+  const visible = linkedReports(reports, nodeName).sort((a,b) => {
+    const usable = (r: IPReport) => r.observed_at && (r.geography || r.asn || r.organization || r.metrics.length) ? 1 : 0;
+    return usable(b) - usable(a);
+  });
   if (hideUnlinked && !visible.length) return null;
   return (
     <section className="ob-ip-panel ob-ip-reports">
       <div className="ob-section-title">
         <h2>
-          <ShieldCheck size={19} /> IP 信息与纯净度
+          <ShieldCheck size={19} /> IP 信息与网络属性
         </h2>
         <button
           className="ob-report-refresh"
@@ -160,7 +164,7 @@ export function IPQuality({
         </button>
       </div>
       <p>
-        展示已读取的原站结果，并保留每个来源自己的评分口径。页面快照不随监控的实时指标变化。
+        汇总已取得的地区、ASN、网络机构与属性；各来源独立标注查询时间，有评分时保留原始口径。
       </p>
       {status === "error" && (
         <p className="ob-report-warning" role="status">

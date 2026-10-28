@@ -48,6 +48,7 @@ import { IPQuality } from "./IPQuality";
 import nodeIPMap from "./data/node-ip-map.json";
 import { ResourceHistory, UnlockResults } from "./ProbeExtras";
 import "./observatory.css";
+import "./custom-probe-tech.css";
 const RegionGlobe = lazy(() =>
   import("./RegionGlobe").then((m) => ({ default: m.RegionGlobe })),
 );
@@ -336,6 +337,11 @@ function Detail({
                 ],
                 ["内存容量", size(server.mem_total)],
                 ["磁盘容量", size(server.disk_total)],
+                ["CPU 核心 / 线程", `${server.cpu_cores ?? "—"} / ${server.cpu_threads ?? "—"}`],
+                ["系统负载", server.online ? server.loadavg : "—"],
+                ["内存已用", server.online ? size(server.mem_used) : "—"],
+                ["磁盘已用", server.online ? size(server.disk_used) : "—"],
+                ["到期日期", server.expires_at],
                 [
                   "TCP / UDP",
                   server.online
@@ -376,6 +382,11 @@ function Detail({
                 ["下一重置日", server.period_end ?? "—"],
                 ["实际上行", size(server.traffic_used_up)],
                 ["实际下行", size(server.traffic_used_down)],
+                ["实际合计", size(server.traffic_used_total)],
+                ["本次启动上行", size(server.boot_traffic_up ?? server.cumulative_up)],
+                ["本次启动下行", size(server.boot_traffic_down ?? server.cumulative_down)],
+                ["计量来源", server.traffic_source ?? "—"],
+                ["用量范围", server.traffic_used_scope ?? "—"],
               ].map(([k, v]) => (
                 <div key={k}>
                   <dt>{k}</dt>
@@ -417,6 +428,9 @@ function Detail({
           <IPQuality nodeName={server.name ?? ""} hideUnlinked />
         )}
         {tab === "ip" && <IPQuality nodeName={server.name ?? ""} />}
+        {safeLink(server.provider_url) && (
+          <a className="ob-classic-link" href={safeLink(server.provider_url)} target="_blank" rel="noopener noreferrer">服务商网站 <ArrowUpRight size={14} /></a>
+        )}
         <a
           className="ob-classic-link"
           href={isDemo ? "?view=classic" : "?view=classic"}
@@ -447,6 +461,7 @@ export function Dashboard({
   const [list, setList] = useState(false);
   const [dark, setDark] = useState(tech);
   const [spinning, setSpinning] = useState(true);
+  const [showGlobe, setShowGlobe] = useState(!tech);
   const [selected, setSelected] = useState<{
     index: number;
     name?: string;
@@ -545,15 +560,15 @@ export function Dashboard({
       <main className="ob-main">
         <div className="ob-intro">
           <div className="ob-eyebrow">
-            {tech ? "XIN / NETWORK COMMAND CENTER" : "YOUR NETWORK, IN FOCUS"}
+            {tech ? "INFRASTRUCTURE / LIVE STATUS" : "YOUR NETWORK, IN FOCUS"}
           </div>
           <div className="ob-title">
             <div>
               <h1>
-                {tech ? "全球网络 · 实时掌控" : "看见连接的每一面"}
+                {tech ? "服务器监控" : "看见连接的每一面"}
                 <span>。</span>
               </h1>
-              <p>上海三网 · 实时资源 · 流量趋势</p>
+              <p>{tech ? "资源、连接、流量与三网质量，一处查看。" : "上海三网 · 实时资源 · 流量趋势"}</p>
             </div>
             <span className="ob-date">
               {isDemo
@@ -588,7 +603,7 @@ export function Dashboard({
         </div>
         {isDemo && (
           <div className="ob-demo-banner">
-            演示模式 · 节点、三网指标与成本均为虚构数据，不连接真实主控。
+            演示模式 · 节点、三网指标与成本为虚构数据；IP 报告展示已收录的查询结果。
           </div>
         )}
         {import.meta.env.PROBE_READONLY_PREVIEW && !isDemo && (
@@ -648,7 +663,13 @@ export function Dashboard({
                 </article>
               ))}
             </section>
-            {page === "overview" && (
+            {page === "overview" && tech && (
+              <button className="ob-globe-toggle" onClick={() => setShowGlobe(!showGlobe)} aria-expanded={showGlobe}>
+                <Globe2 size={16} /> 全球节点分布 · {regions.length} 个地区
+                <span>{showGlobe ? "收起地球与资源总览 −" : "展开地球与资源总览 +"}</span>
+              </button>
+            )}
+            {page === "overview" && showGlobe && (
               <section className="ob-earth-panel">
                 <div className="ob-earth-map">
                   <div className="ob-section-title">
@@ -928,6 +949,7 @@ export function Dashboard({
                             </span>
                             <span className="ob-connection-count">
                               TCP {s.online ? (s.tcp_connections ?? "—") : "—"}
+                              {tech && <> · UDP {s.online ? (s.udp_connections ?? "—") : "—"}</>}
                             </span>
                           </div>
                           <div className="ob-quota">
@@ -956,6 +978,25 @@ export function Dashboard({
                             </p>
                           </div>
                         </>
+                      )}
+                      {tech && page !== "network" && (
+                        <dl className="ob-node-facts">
+                          <div><dt>内存</dt><dd>{s.online ? size(s.mem_used) : "—"} / {size(s.mem_total)}</dd></div>
+                          <div><dt>磁盘</dt><dd>{s.online ? size(s.disk_used) : "—"} / {size(s.disk_total)}</dd></div>
+                          <div><dt>系统</dt><dd>{[s.os, s.arch].filter(Boolean).join(" · ") || "—"}</dd></div>
+                          <div><dt>负载</dt><dd>{s.online ? s.loadavg ?? "—" : "—"}</dd></div>
+                          <div><dt>在线时长</dt><dd>{s.online && s.uptime !== undefined ? `${Math.floor(s.uptime / 86400)}天 ${Math.floor(s.uptime % 86400 / 3600)}小时` : "—"}</dd></div>
+                          <div><dt>到期日期</dt><dd>{s.expires_at ? s.expires_at.slice(0, 10) : "—"}</dd></div>
+                          <div><dt>周期上行</dt><dd>{size(s.traffic_used_up)}</dd></div>
+                          <div><dt>周期下行</dt><dd>{size(s.traffic_used_down)}</dd></div>
+                        </dl>
+                      )}
+                      {tech && (owner || isDemo) && (s.renewal_price !== undefined || s.renewal_price_cny !== undefined || s.renewal_cycle) && (
+                        <div className="ob-owner-renewal">
+                          <span>仅所有者 · 套餐与续费</span>
+                          <strong>{s.renewal_price_cny !== undefined ? `¥${s.renewal_price_cny.toFixed(2)}` : s.renewal_price !== undefined ? `${s.renewal_currency ?? "CNY"} ${s.renewal_price.toFixed(2)}` : "金额未提供"}</strong>
+                          <small>{({month:"月付",quarter:"季付",half_year:"半年付",year:"年付",two_year:"两年付",three_year:"三年付",permanent:"永久"} as Record<string,string>)[s.renewal_cycle ?? ""] ?? "周期未提供"} · {s.expires_at ? `${s.expires_at.slice(0,10)} 到期` : "到期日未提供"}</small>
+                        </div>
                       )}
                       {!s.online && s.last_seen && (
                         <p className="ob-hint">
@@ -1059,9 +1100,10 @@ function LiveDashboard() {
   return <Dashboard {...state} />;
 }
 export function Observatory() {
-  return new URLSearchParams(location.search).get("demo") === "1" ? (
-    <Dashboard data={demo} isDemo />
-  ) : (
-    <LiveDashboard />
-  );
+  const params = new URLSearchParams(location.search);
+  if (params.get("demo") === "1") {
+    const custom = params.get("theme") === "xin-observatory";
+    return <div className={custom ? "xin-tech" : undefined}><Dashboard data={demo} isDemo tech={custom} /></div>;
+  }
+  return <LiveDashboard />;
 }

@@ -77,7 +77,7 @@ test("refresh only visits explicitly published IPs; failures preserve original r
 });
 test("source links require HTTPS and their own domain; reports cannot be attached to arbitrary nodes by name", async () => {
   const { reports } = await loadIPReports(async () => input);
-  const r = reports[0];
+  const r = reports.find(r => r.source === "iplense")!;
   assert.equal(reportLink(r), "https://iplense.cc/zh/ip/24.249.30.27");
   for (const url of [
     "javascript:alert(1)",
@@ -88,7 +88,7 @@ test("source links require HTTPS and their own domain; reports cannot be attache
   ])
     assert.equal(reportLink({ ...r, report_url: url }), undefined);
   assert.equal(linkedReports(reports).length, snapshot.reports.length);
-  assert.equal(linkedReports(reports, "NOVIXLINK-美西-COX家宽").length, 2);
+  assert.equal(linkedReports(reports, "NOVIXLINK-美西-COX家宽").length, snapshot.reports.filter(r => r.node_names?.includes("NOVIXLINK-美西-COX家宽")).length);
   assert.deepEqual(linkedReports(reports, "unconfirmed-node"), []);
   assert.deepEqual(
     linkedReports([{ ...r, node_names: ["confirmed-node"] }], "confirmed-node"),

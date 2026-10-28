@@ -1,4 +1,4 @@
-export type IPProvider = "iplense" | "ip2location" | "ippure" | "netcoffee";
+export type IPProvider = "iplense" | "ip2location" | "ippure" | "netcoffee" | "ipinfo";
 export interface IPReport {
   id: string;
   ip: string;
@@ -22,13 +22,16 @@ export interface IPReport {
     direction: "higher_is_better" | "lower_is_better";
     description?: string;
   }[];
+  attributes?: { label: string; value: string }[];
   asn_traffic?: { human: number; automated: number };
+  refresh_error?: string;
   refresh_status?: "ok" | "failed";
 }
 export interface IPReportPayload {
   reports: IPReport[];
 }
 export const reportSources = [
+  {id:"ipinfo",name:"IPinfo",url:"https://ipinfo.io/",description:"指定 IP 查询 · 地区 · ASN · 网络机构"},
   {
     id: "iplense",
     name: "IPLense",
@@ -50,11 +53,12 @@ export const reportSources = [
   {
     id: "netcoffee",
     name: "Net.Coffee",
-    url: "https://ip.net.coffee/ip/",
-    description: "多源 IP 信息与评分查询",
+    url: "https://ip.net.coffee/claude/",
+    description: "Claude IP 信任分 · 网络属性 · 安全标记",
   },
 ] as const;
 const sourceHosts: Record<IPProvider, string[]> = {
+  ipinfo: ["ipinfo.io"],
   iplense: ["iplense.cc"],
   ip2location: ["www.ip2location.io", "ip2location.io"],
   ippure: ["ippure.com"],

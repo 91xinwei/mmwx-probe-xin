@@ -3,6 +3,7 @@ import { publicResponse, publicFrame, project } from "./public-data";
 import { isOwner, ownerConfig, type OwnerEnv } from "./owner-auth";
 
 interface Env extends OwnerEnv {
+  IPINFO_TOKEN?: string;
   ASSETS: Fetcher;
   MMWX_ORIGIN: string;
   PROBE_TOKEN: string;
@@ -122,7 +123,7 @@ export default {
         return json({ error: "Method not allowed" }, 405);
       if (!fromOwnPage(request, incoming.origin))
         return json({ error: "Not found" }, 404);
-      return ipReportsResponse(request, env.IP2LOCATION_API_KEY);
+      return ipReportsResponse(request, env.IP2LOCATION_API_KEY, env.IPINFO_TOKEN);
     }
     if (incoming.pathname === "/login") {
       return Response.redirect(

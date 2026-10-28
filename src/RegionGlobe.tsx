@@ -183,7 +183,7 @@ export function RegionGlobe({ regions, compact = false, showArcs = true, autoRot
         const id = String(country.id || '').padStart(3, '0')
         const code = countries.numericToAlpha2(id)
         const count = code ? activeRegions.get(code) || 0 : 0
-        return <path key={id} className={count ? 'globe-country active' : 'globe-country'} d={path(country) || ''}><title>{country.properties?.name || id}{count ? ` · ${count} 台服务器` : ''}</title></path>
+        return <path key={`${id}-${country.properties?.name ?? ""}`} className={count ? 'globe-country active' : 'globe-country'} d={path(country) || ''}><title>{country.properties?.name || id}{count ? ` · ${count} 台服务器` : ''}</title></path>
       })}
       {showArcs && <RegionArcs arcs={arcs} projection={projection} />}
       <g className="globe-points">{locations.map(location => <g key={location.code} className="laser-origin"><path className="region-point-halo" d={haloPath({ type: 'Point', coordinates: location.coordinates }) || ''} /><path className="region-point" d={pointPath({ type: 'Point', coordinates: location.coordinates }) || ''}><title>{location.code} · {location.count} 台服务器</title></path></g>)}</g>
