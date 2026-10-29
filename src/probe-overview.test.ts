@@ -14,6 +14,9 @@ import {
   todayTrafficTotal,
   type ProbeOverviewServer,
   kpiColumns,
+  connHistoryTotals,
+  quotaPerServer,
+  upcomingExpiries,
 } from "./probe-overview";
 
 function ok(condition: unknown, message = "assertion failed") {
@@ -231,5 +234,58 @@ describe("kpiColumns", () => {
     assert.equal(kpiColumns(6, 390), 2);
     assert.equal(kpiColumns(6, 0), 3);
     assert.equal(kpiColumns(1, 390), 1);
+  });
+});
+
+describe("kpi aside helpers", () => {
+  it("sums connection history aligned to the latest sample", () => {
+    const r = connHistoryTotals([
+      {
+        name: "a",
+        conn_history: { tcp: [1, 2, 3], udp: [0, 1, 1] },
+      } as ProbeOverviewServer,
+      {
+        name: "b",
+        conn_history: { tcp: [10, null], udp: [5, 5] },
+      } as ProbeOverviewServer,
+      { name: "c" } as ProbeOverviewServer,
+    ]);
+    assert.deepEqual(r, { tcp: [1, 12, 3], udp: [0, 6, 6] });
+    assert.equal(
+      connHistoryTotals([{ name: "x" } as ProbeOverviewServer]),
+      undefined,
+    );
+  });
+  it("lists quota usage per limited server, highest first, capped at 100", () => {
+    const r = quotaPerServer(
+      [
+        { name: "a", traffic_limit: 100 } as ProbeOverviewServer,
+        { name: "b", traffic_limit: 100 } as ProbeOverviewServer,
+        { name: "c" } as ProbeOverviewServer,
+      ],
+      (s) => (s.name === "a" ? 30 : 250),
+    );
+    assert.deepEqual(r, [
+      { name: "b", pct: 100 },
+      { name: "a", pct: 30 },
+    ]);
+  });
+  it("returns the nearest expiries including already expired ones", () => {
+    const now = new Date("2026-10-29T00:00:00Z").getTime();
+    const r = upcomingExpiries(
+      [
+        { name: "far", expires_at: "2026-12-30" } as ProbeOverviewServer,
+        { name: "soon", expires_at: "2026-11-02" } as ProbeOverviewServer,
+        { name: "gone", expires_at: "2026-10-20" } as ProbeOverviewServer,
+        { name: "none" } as ProbeOverviewServer,
+      ],
+      now,
+      2,
+    );
+    assert.deepEqual(
+      r.map((x) => x.name),
+      ["gone", "soon"],
+    );
+    assert.ok(r[0].days < 0);
   });
 });

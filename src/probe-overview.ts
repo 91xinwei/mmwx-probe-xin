@@ -384,3 +384,63 @@ export function kpiColumns(
   const rows = Math.ceil(count / max);
   return Math.ceil(count / rows);
 }
+
+/**
+ * 全部服务器连接数历史按时间点求和(汇总格右栏小图用)。各台的采样条数可能不同,按「最近」对齐
+ * (从末尾往前数),没数据的点当 0;一台都没有历史就返回 undefined。
+ */
+export function connHistoryTotals(servers: ProbeOverviewServer[]) {
+  let len = 0;
+  for (const s of servers)
+    len = Math.max(
+      len,
+      s.conn_history?.tcp.length ?? 0,
+      s.conn_history?.udp.length ?? 0,
+    );
+  if (!len) return undefined;
+  const tcp = new Array<number>(len).fill(0);
+  const udp = new Array<number>(len).fill(0);
+  for (const s of servers) {
+    const h = s.conn_history;
+    if (!h) continue;
+    const add = (src: (number | null)[], dst: number[]) => {
+      const off = len - src.length;
+      src.forEach((v, i) => {
+        if (v !== null && v !== undefined) dst[off + i] += v;
+      });
+    };
+    add(h.tcp, tcp);
+    add(h.udp, udp);
+  }
+  return { tcp, udp };
+}
+
+/** 设了额度的每台用量百分比(汇总格右栏一台一根柱),按用量从高到低。 */
+export function quotaPerServer(
+  servers: ProbeOverviewServer[],
+  used: (s: ProbeOverviewServer) => number | undefined,
+) {
+  return servers
+    .filter((s) => (s.traffic_limit ?? 0) > 0)
+    .map((s) => ({
+      name: s.name || "",
+      pct: Math.min(100, ((used(s) ?? 0) / s.traffic_limit!) * 100),
+    }))
+    .sort((a, b) => b.pct - a.pct);
+}
+
+/** 最近到期的几台(含已过期,天数为负),按剩余天数升序。 */
+export function upcomingExpiries(
+  servers: ProbeOverviewServer[],
+  now = Date.now(),
+  limit = 3,
+) {
+  const list: { name: string; days: number }[] = [];
+  for (const s of servers) {
+    if (!s.expires_at) continue;
+    const end = new Date(`${s.expires_at}T23:59:59`).getTime();
+    if (Number.isNaN(end)) continue;
+    list.push({ name: s.name || "", days: Math.floor((end - now) / 86400000) });
+  }
+  return list.sort((a, b) => a.days - b.days).slice(0, limit);
+}

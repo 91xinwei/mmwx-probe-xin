@@ -2371,8 +2371,61 @@ footer a:hover {
 .stat-with-aside {
   display: grid;
   min-height: 68px;
-  grid-template-columns: minmax(0, 1fr) 96px;
+  /* 文字栏只占它需要的宽(最多 70%),剩下全给右栏小图:宽屏格子很宽时图跟着变宽,小字也不被截断 */
+  grid-template-columns: fit-content(70%) minmax(96px, 1fr);
   gap: 10px;
+}
+.quota-bars {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  height: 48px;
+  align-items: flex-end;
+  gap: 3px;
+}
+.quota-bars > i {
+  display: block;
+  min-height: 2px;
+  flex: 1;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--primary) 60%, transparent);
+}
+.quota-bars > i.warn {
+  background: #f59e0b;
+}
+.quota-bars > i.danger {
+  background: #ef4444;
+}
+.expiry-list {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 2px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+}
+.expiry-list > span {
+  display: flex;
+  gap: 8px;
+}
+.expiry-list > span > span:first-child {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.expiry-list .soon {
+  color: #d97706;
+}
+.expiry-list .gone {
+  color: #dc2626;
 }
 .stat-aside {
   position: relative;
