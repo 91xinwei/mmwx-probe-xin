@@ -2546,7 +2546,9 @@ function FitText({
   const ref = useRef<HTMLSpanElement>(null);
   useLayoutEffect(() => {
     const el = ref.current;
-    const box = el?.parentElement;
+    // 观察格子本身而不是父元素:父元素(文字栏)的宽度跟着文字字号变,观察它会「缩字号 → 父元素变窄 →
+    // 回调里重置字号 → 又变宽」来回打架,停在没缩的状态;格子宽度只由汇总网格决定
+    const box = el?.closest(".kpi") ?? el?.parentElement;
     if (!el || !box) return;
     const shrink = () => {
       el.style.fontSize = "";
