@@ -1,5 +1,11 @@
 import {
   averageLoad,
+  connectionTotals,
+  dailyTrafficSeries,
+  latencySummary,
+  monthlyCost,
+  nextExpiry,
+  quotaSummary,
   formatCapacity,
   formatSize,
   probeHealthIssue,
@@ -116,3 +122,97 @@ describe("probe overview", () => {
 });
 
 console.log("ok");
+
+describe("probe overview summary", () => {
+  const GB2 = 1024 ** 3;
+  it("daily series merges servers by date and keeps the last N days", () => {
+    const a: ProbeOverviewServer = {
+      online: true,
+      daily_traffic: [
+        { date: "2026-10-26", total: 1, uplink: 1, downlink: 0 },
+        { date: "2026-10-27", total: 2, uplink: 1, downlink: 1 },
+        { date: "2026-10-28", total: 3, uplink: 2, downlink: 1 },
+      ],
+    };
+    const b: ProbeOverviewServer = {
+      online: true,
+      daily_traffic: [{ date: "2026-10-28", total: 4, uplink: 4, downlink: 0 }],
+    };
+    const s = dailyTrafficSeries([a, b], 2);
+    assert.deepEqual(
+      s.map((d) => [d.date, d.total, d.up, d.down]),
+      [
+        ["2026-10-27", 2, 1, 1],
+        ["2026-10-28", 7, 6, 1],
+      ],
+    );
+    assert.deepEqual(dailyTrafficSeries([{ online: true }]), []);
+  });
+  it("connection totals only count online servers that report", () => {
+    assert.equal(connectionTotals([{ online: true }]), undefined);
+    assert.deepEqual(
+      connectionTotals([
+        { online: true, tcp_connections: 3, udp_connections: 1 },
+        { online: false, tcp_connections: 99 },
+        { online: true, tcp_connections: 2 },
+      ]),
+      { tcp: 5, udp: 1, total: 6 },
+    );
+  });
+  it("quota summary over limited servers", () => {
+    const q = quotaSummary(
+      [
+        { online: true, traffic_limit: 100 * GB2 },
+        { online: true, traffic_limit: 100 * GB2 },
+        { online: true },
+      ],
+      (s) => (s.traffic_limit ? 90 * GB2 : undefined),
+      80,
+    );
+    assert.ok(q);
+    assert.equal(q!.servers, 2);
+    assert.equal(q!.warn, 2);
+    assert.equal(Math.round(q!.pct), 90);
+    assert.equal(
+      quotaSummary([{ online: true }], () => 1),
+      undefined,
+    );
+  });
+  it("latency summary buckets by average ms", () => {
+    const l = latencySummary([
+      { online: true, ping: [{ current_ms: 20, loss_pct: 0 }] },
+      { online: true, ping: [{ current_ms: 150, loss_pct: 2 }] },
+      { online: true, ping: [{ current_ms: -1, loss_pct: 100 }] },
+      { online: false, ping: [{ current_ms: 1 }] },
+    ]);
+    assert.ok(l);
+    assert.equal(l!.good, 1);
+    assert.equal(l!.fair, 1);
+    assert.equal(l!.poor, 1);
+    assert.equal(l!.avgMs, 85);
+    assert.equal(Math.round(l!.avgLoss), 34);
+    assert.equal(latencySummary([{ online: true }]), undefined);
+  });
+  it("monthly cost and next expiry", () => {
+    assert.equal(
+      monthlyCost([
+        { online: true, renewal_price_cny: 120, renewal_cycle: "year" },
+        { online: true, renewal_price_cny: 30, renewal_cycle: "month" },
+        { online: true, renewal_price_cny: 999, renewal_cycle: "permanent" },
+      ]),
+      40,
+    );
+    assert.equal(monthlyCost([{ online: true }]), undefined);
+    const now = new Date("2026-10-28T00:00:00").getTime();
+    assert.deepEqual(
+      nextExpiry(
+        [
+          { online: true, name: "a", expires_at: "2026-11-10" },
+          { online: true, name: "b", expires_at: "2026-10-30" },
+        ],
+        now,
+      ),
+      { name: "b", days: 3 },
+    );
+  });
+});
