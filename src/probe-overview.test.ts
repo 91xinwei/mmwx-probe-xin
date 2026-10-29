@@ -13,6 +13,7 @@ import {
   sortProbeServers,
   todayTrafficTotal,
   type ProbeOverviewServer,
+  kpiColumns,
 } from "./probe-overview";
 
 function ok(condition: unknown, message = "assertion failed") {
@@ -214,5 +215,21 @@ describe("probe overview summary", () => {
       ),
       { name: "b", days: 3 },
     );
+  });
+});
+
+describe("kpiColumns", () => {
+  it("balances rows instead of leaving a half-empty second row", () => {
+    assert.equal(kpiColumns(6, 1120), 3);
+    assert.equal(kpiColumns(4, 1120), 2);
+    assert.equal(kpiColumns(4, 1400), 4);
+    assert.equal(kpiColumns(4, 700), 2);
+    assert.equal(kpiColumns(5, 1120), 3);
+    assert.equal(kpiColumns(6, 2000), 6);
+  });
+  it("keeps two columns on phones and three when unmeasured", () => {
+    assert.equal(kpiColumns(6, 390), 2);
+    assert.equal(kpiColumns(6, 0), 3);
+    assert.equal(kpiColumns(1, 390), 1);
   });
 });

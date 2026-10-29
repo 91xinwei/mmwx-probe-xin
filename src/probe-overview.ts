@@ -365,3 +365,22 @@ export function nextExpiry(servers: ProbeOverviewServer[], now = Date.now()) {
   }
   return best;
 }
+
+/**
+ * 汇总格排几列。auto-fit 会按宽度塞满第一行、剩下的格子在第二行留一大块空白(6 格在 2000px
+ * 宽屏上排成 5 + 2 就很难看);改成按「至少 minCell 宽」算出一行最多放几格,放不下时按行数
+ * 均分,让各行格数一样(6 格 → 3 + 3、4 格 → 2 + 2)。宽度没量到时按 3 列。手机(<640)固定两列。
+ */
+export function kpiColumns(
+  count: number,
+  width: number,
+  minCell = 320,
+): number {
+  if (count <= 1) return 1;
+  if (width <= 0) return Math.min(count, 3);
+  if (width < 640) return 2;
+  const max = Math.max(2, Math.floor(width / minCell));
+  if (max >= count) return count;
+  const rows = Math.ceil(count / max);
+  return Math.ceil(count / rows);
+}

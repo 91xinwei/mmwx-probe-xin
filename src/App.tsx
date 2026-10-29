@@ -6,6 +6,7 @@ import {
   useContext,
   useEffect,
   useLayoutEffect,
+  useCallback,
   useMemo,
   useRef,
   useState,
@@ -122,6 +123,7 @@ import {
   monthlyCost,
   nextExpiry,
   quotaSummary,
+  kpiColumns,
 } from "./probe-overview";
 import { PasskeyLogin } from "./PasskeyLogin";
 import { Twemoji } from "./Twemoji";
@@ -2531,7 +2533,6 @@ function Stat({
   sub,
   chart,
   aside,
-  wide,
   onClick,
   onMouseLeave,
 }: {
@@ -2544,7 +2545,6 @@ function Stat({
   /** 右侧独占一栏的图(折线 / 柱状),占满格子高度,不挤文字 */
   aside?: ReactNode;
   /** 占两列(实时网速两个数并排放不下一格) */
-  wide?: boolean;
   onClick?: () => void;
   onMouseLeave?: () => void;
 }) {
@@ -2569,7 +2569,7 @@ function Stat({
   ) : (
     text
   );
-  const cls = wide ? "kpi stat wide" : "kpi stat";
+  const cls = "kpi stat";
   return onClick ? (
     <button
       type="button"
@@ -2744,6 +2744,18 @@ export function App() {
     [],
   );
   const [speedHover, setSpeedHover] = useState<number | null>(null);
+  // 汇总卡实际宽度 → 决定排几列(见 kpiColumns)。卡片是条件渲染的,用回调 ref 挂观察器。
+  const [kpiWidth, setKpiWidth] = useState(0);
+  const kpiObserver = useRef<ResizeObserver | null>(null);
+  const kpiGridRef = useCallback((el: HTMLDivElement | null) => {
+    kpiObserver.current?.disconnect();
+    kpiObserver.current = null;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setKpiWidth(el.clientWidth));
+    ro.observe(el);
+    setKpiWidth(el.clientWidth);
+    kpiObserver.current = ro;
+  }, []);
   const liveDown = (data?.servers || []).reduce(
     (sum, server) => sum + (server.download_speed || 0),
     0,
@@ -2935,7 +2947,6 @@ export function App() {
     hasSpeed && (
       <Stat
         key="speed"
-        wide
         icon={Activity}
         label="实时网速"
         value={
@@ -3133,7 +3144,18 @@ export function App() {
       <RegionGlobe regions={globeRegions} compact />
     </Suspense>
   );
-  const kpiGrid = <div className="kpi-grid six">{kpis}</div>;
+  // 按卡宽算列数、各行格数均分(见 kpiColumns):auto-fit 在宽屏上会排成 5 + 2,第二行右边空一大块
+  const kpiGrid = (
+    <div
+      ref={kpiGridRef}
+      className="kpi-grid six"
+      style={{
+        gridTemplateColumns: `repeat(${kpiColumns(kpis.length, kpiWidth)}, minmax(0, 1fr))`,
+      }}
+    >
+      {kpis}
+    </div>
+  );
   return (
     <HistoryDaysContext.Provider value={data.history_days ?? 1}>
       <div
