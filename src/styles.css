@@ -219,6 +219,16 @@ button {
   background: transparent;
 }
 @media (max-width: 639px) {
+  /* 手机两列格只有一百多像素,网速两个数放不下:独占一行,其它格子补位 */
+  .kpi-grid.six {
+    grid-auto-flow: row dense;
+  }
+  .kpi-grid.six > .kpi.speed-cell,
+  .kpi-grid.six:has(> .speed-cell) > :last-child:nth-child(even),
+  .kpi-grid.six:not(:has(> .speed-cell))
+    > :last-child:nth-child(odd):not(:first-child) {
+    grid-column: span 2;
+  }
   .overview.with-globe {
     display: flex;
     flex-direction: column;
@@ -2461,11 +2471,26 @@ footer a:hover {
   align-items: baseline;
   gap: 0 12px;
 }
-@media (min-width: 640px) {
-  .stat-speed {
-    flex-wrap: nowrap;
-    white-space: nowrap;
-  }
+/* 一行到底:放不下时由 FitText 缩字号,不折行、不截断 */
+.fit-text {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.fit-text.stat-sub-fit {
+  flex: 1;
+}
+/* 最小字号都放不下时藏掉说明字,只留数值 */
+.fit-text[data-overflow] > .fit-drop {
+  display: none;
+}
+.fit-text.stat-speed {
+  display: block;
+}
+/* 实时网速:文字优先,小图至少留 64px */
+.stat-with-aside.fit-sub {
+  grid-template-columns: minmax(0, max-content) minmax(64px, 1fr);
 }
 .stat-sub {
   display: flex;

@@ -2528,6 +2528,67 @@ const sortLabels: Record<ProbeSortKey, string> = {
 
 // 顶部指标格:可点击的就是一个筛选入口
 // 与主仓内置探针 probe-page.tsx 的 ProbeStat 同一套布局:三行定高,右侧可挂一栏小图。
+/**
+ * 一行放不下就等比缩小字号直到放得下(最小 minPx),不折行、不截断。用于实时网速这类关键数字:
+ * 宽字体主题 / 窄格子下宁可字小一点,也不能显示成「1.29 M…」。fitKey 变了(数值变了)重新量。
+ */
+function FitText({
+  children,
+  fitKey,
+  minPx = 9,
+  className,
+}: {
+  children: ReactNode;
+  fitKey: string;
+  minPx?: number;
+  className?: string;
+}) {
+  const ref = useRef<HTMLSpanElement>(null);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    const box = el?.parentElement;
+    if (!el || !box) return;
+    const shrink = () => {
+      el.style.fontSize = "";
+      let size = parseFloat(getComputedStyle(el).fontSize);
+      // 字距 / 图标宽度不随字号等比缩,一次算不准,收敛几轮
+      for (let i = 0; i < 6 && size > minPx; i++) {
+        const need = el.scrollWidth;
+        const avail = el.clientWidth;
+        if (avail <= 0 || need <= avail + 0.5) break;
+        size = Math.max(
+          minPx,
+          Math.floor(((size * avail) / need) * 10) / 10 - 0.2,
+        );
+        el.style.fontSize = `${size}px`;
+      }
+      return el.scrollWidth <= el.clientWidth + 0.5;
+    };
+    // 最小字号都放不下时再藏掉可省的说明字(.fit-drop),只留数值
+    const fit = () => {
+      delete el.dataset.overflow;
+      if (!shrink()) {
+        el.dataset.overflow = "1";
+        shrink();
+      }
+    };
+    fit();
+    const ro = new ResizeObserver(fit);
+    ro.observe(box);
+    // 字体晚到会改变宽度,到了再量一次
+    void document.fonts?.ready.then(fit);
+    return () => ro.disconnect();
+  }, [fitKey, minPx]);
+  return (
+    <span
+      ref={ref}
+      className={className ? `fit-text ${className}` : "fit-text"}
+    >
+      {children}
+    </span>
+  );
+}
+
 function Stat({
   icon: Icon,
   label,
@@ -2537,6 +2598,7 @@ function Stat({
   aside,
   onClick,
   onMouseLeave,
+  fitSub,
 }: {
   icon: ComponentType<{ size?: number }>;
   label: string;
@@ -2546,9 +2608,10 @@ function Stat({
   chart?: ReactNode;
   /** 右侧独占一栏的图(折线 / 柱状),占满格子高度,不挤文字 */
   aside?: ReactNode;
-  /** 占两列(实时网速两个数并排放不下一格) */
   onClick?: () => void;
   onMouseLeave?: () => void;
+  /** 小字是关键数据(实时网速峰值):放不下时缩字号而不是截成「…」,fitSub 是用来判断要不要重量的文本 */
+  fitSub?: string;
 }) {
   const text = (
     <div className="stat-text">
@@ -2559,19 +2622,30 @@ function Stat({
       <strong className="stat-value">{value}</strong>
       <span className="stat-sub">
         {chart}
-        {sub !== undefined && <span className="stat-sub-text">{sub}</span>}
+        {sub !== undefined &&
+          (fitSub !== undefined ? (
+            <FitText fitKey={fitSub} className="stat-sub-fit">
+              {sub}
+            </FitText>
+          ) : (
+            <span className="stat-sub-text">{sub}</span>
+          ))}
       </span>
     </div>
   );
   const body = aside ? (
-    <div className="stat-with-aside">
+    <div
+      className={
+        fitSub !== undefined ? "stat-with-aside fit-sub" : "stat-with-aside"
+      }
+    >
       {text}
       <div className="stat-aside">{aside}</div>
     </div>
   ) : (
     text
   );
-  const cls = "kpi stat";
+  const cls = fitSub !== undefined ? "kpi stat speed-cell" : "kpi stat";
   return onClick ? (
     <button
       type="button"
@@ -2922,6 +2996,15 @@ export function App() {
       : null;
   const speedAgo =
     speedHover !== null ? (speedHistory.length - 1 - speedHover) * 3 : 0;
+  // 峰值写成「3 分钟峰值 ↓ x · ↑ y」:去掉「近」省宽度,放不下时缩字号(见 FitText)
+  const speedSub = hov
+    ? speedAgo === 0
+      ? "现在"
+      : `${speedAgo} 秒前`
+    : speedHistory.length > 1
+      ? `3 分钟峰值|${speed(Math.max(...speedHistory.map((p) => p.d)))}|${speed(Math.max(...speedHistory.map((p) => p.u)))}`
+      : "全部服务器合计";
+  const speedValue = `${speed(hov ? hov.d : liveDown)}|${speed(hov ? hov.u : liveUp)}`;
   const kpis = [
     <Stat
       key="servers"
@@ -2947,22 +3030,24 @@ export function App() {
     hasSpeed && (
       <Stat
         key="speed"
+        fitSub={speedSub}
         icon={Activity}
         label="实时网速"
         value={
-          <span className="stat-speed">
-            <span className="down">↓ {speed(hov ? hov.d : liveDown)}</span>
+          <FitText fitKey={speedValue} minPx={12} className="stat-speed">
+            <span className="down">↓ {speed(hov ? hov.d : liveDown)}</span>{" "}
             <span className="up">↑ {speed(hov ? hov.u : liveUp)}</span>
-          </span>
+          </FitText>
         }
         sub={
-          hov
-            ? speedAgo === 0
-              ? "现在"
-              : `${speedAgo} 秒前`
-            : speedHistory.length > 1
-              ? `近 3 分钟峰值 ↓ ${speed(Math.max(...speedHistory.map((p) => p.d)))} · ↑ ${speed(Math.max(...speedHistory.map((p) => p.u)))}`
-              : "全部服务器合计"
+          speedSub.includes("|") ? (
+            <>
+              <span className="fit-drop">{speedSub.split("|")[0]} </span>↓{" "}
+              {speedSub.split("|")[1]} · ↑ {speedSub.split("|")[2]}
+            </>
+          ) : (
+            speedSub
+          )
         }
         onMouseLeave={() => setSpeedHover(null)}
         aside={
