@@ -28,7 +28,6 @@ import {
   CloudDownload,
   CloudUpload,
   Cpu,
-  Globe2,
   HardDrive,
   LayoutGrid,
   List,
@@ -2917,14 +2916,6 @@ export function App() {
   const expiries = upcomingExpiries(servers);
   const showGlobe = !!data.show_globe && globeRegions.length > 0;
   const regionCount = new Set(globeRegions).size;
-  const regionChips = Array.from(
-    globeRegions.reduce((m, r) => {
-      const code = countryCodeFromRegion(r) || r;
-      return m.set(code, (m.get(code) ?? 0) + 1);
-    }, new Map<string, number>()),
-  )
-    .map(([code, count]) => ({ code, count }))
-    .sort((x, y) => y.count - x.count);
   const hov =
     speedHover !== null && speedHover < speedHistory.length
       ? speedHistory[speedHover]
@@ -3253,25 +3244,9 @@ export function App() {
           (showGlobe ? (
             <section className="overview with-globe">
               {kpiGrid}
+              {/* 右侧只放地球本身,不再带地区标签:标签占掉一半宽度让地球只有 112px */}
               <article className="globe-mini">
                 <div className="globe-mini-stage">{globeBody}</div>
-                <div className="globe-mini-text">
-                  <span>
-                    <Globe2 size={14} />
-                    地区分布
-                  </span>
-                  <small>
-                    {regionCount} 个地区 · {globeRegions.length} 台
-                  </small>
-                  <div className="region-chips">
-                    {regionChips.map((r) => (
-                      <span key={r.code}>
-                        <b>{r.code}</b>
-                        {r.count}
-                      </span>
-                    ))}
-                  </div>
-                </div>
               </article>
             </section>
           ) : (

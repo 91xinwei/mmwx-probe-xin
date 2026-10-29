@@ -286,54 +286,14 @@ button.kpi:hover {
 .globe-mini {
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
   overflow: hidden;
-  padding: 10px 14px;
+  padding: 8px;
 }
 .globe-mini-stage {
-  width: 112px;
-  height: 112px;
+  width: 150px;
+  height: 150px;
   flex-shrink: 0;
-}
-.globe-mini-text {
-  display: flex;
-  min-width: 0;
-  flex: 1;
-  flex-direction: column;
-  gap: 6px;
-}
-.globe-mini-text > span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--muted);
-  font-size: 12px;
-}
-.globe-mini-text > small {
-  color: var(--muted);
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-}
-.region-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-.region-chips > span {
-  display: inline-flex;
-  height: 22px;
-  align-items: center;
-  gap: 4px;
-  border-radius: 6px;
-  padding: 0 7px;
-  color: var(--muted);
-  background: color-mix(in srgb, var(--muted) 12%, transparent);
-  font-size: 12px;
-  font-variant-numeric: tabular-nums;
-}
-.region-chips b {
-  color: inherit;
-  font-weight: 600;
 }
 .probe-toolbar {
   padding: 12px;
@@ -2372,7 +2332,7 @@ footer a:hover {
   display: grid;
   min-height: 68px;
   /* 文字栏只占它需要的宽(最多 70%),剩下全给右栏小图:宽屏格子很宽时图跟着变宽,小字也不被截断 */
-  grid-template-columns: fit-content(70%) minmax(96px, 1fr);
+  grid-template-columns: minmax(0, max-content) minmax(96px, 1fr);
   gap: 10px;
 }
 .quota-bars {
