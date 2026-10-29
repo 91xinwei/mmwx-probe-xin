@@ -15,7 +15,6 @@ import {
   type ProbeOverviewServer,
   kpiColumns,
   connHistoryTotals,
-  quotaPerServer,
   upcomingExpiries,
 } from "./probe-overview";
 
@@ -255,20 +254,6 @@ describe("kpi aside helpers", () => {
       connHistoryTotals([{ name: "x" } as ProbeOverviewServer]),
       undefined,
     );
-  });
-  it("lists quota usage per limited server, highest first, capped at 100", () => {
-    const r = quotaPerServer(
-      [
-        { name: "a", traffic_limit: 100 } as ProbeOverviewServer,
-        { name: "b", traffic_limit: 100 } as ProbeOverviewServer,
-        { name: "c" } as ProbeOverviewServer,
-      ],
-      (s) => (s.name === "a" ? 30 : 250),
-    );
-    assert.deepEqual(r, [
-      { name: "b", pct: 100 },
-      { name: "a", pct: 30 },
-    ]);
   });
   it("returns the nearest expiries including already expired ones", () => {
     const now = new Date("2026-10-29T00:00:00Z").getTime();

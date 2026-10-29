@@ -415,20 +415,6 @@ export function connHistoryTotals(servers: ProbeOverviewServer[]) {
   return { tcp, udp };
 }
 
-/** 设了额度的每台用量百分比(汇总格右栏一台一根柱),按用量从高到低。 */
-export function quotaPerServer(
-  servers: ProbeOverviewServer[],
-  used: (s: ProbeOverviewServer) => number | undefined,
-) {
-  return servers
-    .filter((s) => (s.traffic_limit ?? 0) > 0)
-    .map((s) => ({
-      name: s.name || "",
-      pct: Math.min(100, ((used(s) ?? 0) / s.traffic_limit!) * 100),
-    }))
-    .sort((a, b) => b.pct - a.pct);
-}
-
 /** 最近到期的几台(含已过期,天数为负),按剩余天数升序。 */
 export function upcomingExpiries(
   servers: ProbeOverviewServer[],

@@ -124,7 +124,6 @@ import {
   quotaSummary,
   kpiColumns,
   connHistoryTotals,
-  quotaPerServer,
   upcomingExpiries,
 } from "./probe-overview";
 import { PasskeyLogin } from "./PasskeyLogin";
@@ -2996,9 +2995,6 @@ export function App() {
   const upcoming = nextExpiry(servers);
   // 汇总格右栏:宽屏时格子很宽,三行文字只占左边一截,右栏放点有信息量的图
   const connHist = connHistoryTotals(servers);
-  const quotaBars = quotaPerServer(servers, (s) =>
-    billableTraffic(s as ProbeServer),
-  );
   const expiries = upcomingExpiries(servers);
   const showGlobe = !!data.show_globe && globeRegions.length > 0;
   const regionCount = new Set(globeRegions).size;
@@ -3148,22 +3144,6 @@ export function App() {
       <Stat
         key="quota-latency"
         icon={Gauge}
-        aside={
-          quotaBars.length > 0 ? (
-            <div className="quota-bars" aria-hidden>
-              {quotaBars.map((b) => (
-                <i
-                  key={b.name}
-                  title={`${b.name} ${b.pct.toFixed(0)}%`}
-                  className={
-                    b.pct >= 90 ? "danger" : b.pct >= 80 ? "warn" : undefined
-                  }
-                  style={{ height: `${Math.max(4, b.pct)}%` }}
-                />
-              ))}
-            </div>
-          ) : undefined
-        }
         label={[quota && "本期流量额度", latency && "网络质量"]
           .filter(Boolean)
           .join(" · ")}
