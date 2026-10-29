@@ -3046,7 +3046,7 @@ export function App() {
         icon={Activity}
         label="实时网速"
         value={
-          <FitText fitKey={speedValue} minPx={12} className="stat-speed">
+          <FitText fitKey={speedValue} minPx={10} className="stat-speed">
             <span className="down">↓ {speed(hov ? hov.d : liveDown)}</span>{" "}
             <span className="up">↑ {speed(hov ? hov.u : liveUp)}</span>
           </FitText>
