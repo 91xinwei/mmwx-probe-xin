@@ -2575,11 +2575,21 @@ function FitText({
       }
     };
     fit();
-    const ro = new ResizeObserver(fit);
+    // 格子变宽窄、或字体 / 主题变了(文字自身宽度变)都要重量;合到下一帧做一次,
+    // 回调里改字号引起的尺寸变化也只会再排一帧,不会来回打架
+    let raf = 0;
+    const ro = new ResizeObserver(() => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(fit);
+    });
     ro.observe(box);
+    ro.observe(el);
     // 字体晚到会改变宽度,到了再量一次
     void document.fonts?.ready.then(fit);
-    return () => ro.disconnect();
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+    };
   }, [fitKey, minPx]);
   return (
     <span
