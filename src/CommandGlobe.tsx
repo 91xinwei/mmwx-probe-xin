@@ -73,7 +73,7 @@ export function CommandGlobe({regions,spinning}:{regions:string[];spinning:boole
     const reduce=matchMedia("(prefers-reduced-motion: reduce)");
     let frame=0,last=performance.now();
     const animate=(now:number)=>{frame=requestAnimationFrame(animate);if(document.hidden){last=now;return;}if(now-last<32)return;const delta=Math.min(.1,(now-last)/1000);last=now;
-      if(spinningRef.current && !drag.active && !reduce.matches)group.rotation.y+=delta*.035;
+      if(spinningRef.current && !drag.active && !reduce.matches)group.rotation.y+=delta*(Math.PI*2/30);
       group.updateMatrixWorld();
       const projected=labels.flatMap(({code,count,point})=>{const p=point.clone().applyMatrix4(group.matrixWorld);if(p.z<.12)return [];p.project(camera);return [{code,count,x:(p.x*.5+.5)*el.clientWidth,y:(-p.y*.5+.5)*el.clientHeight}];});
       const r=el.clientHeight/(2*Math.tan(THREE.MathUtils.degToRad(camera.fov/2))*Math.sqrt(camera.position.z**2-1));
