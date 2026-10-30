@@ -832,6 +832,8 @@ button.net-box:not(:disabled):hover {
   background: #ef4444;
 }
 .return-route-badges {
+  /* 回程徽章按这一行的实际宽度切横排/竖排(见下方 @container),不按屏幕宽 */
+  container-type: inline-size;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 6px;
@@ -2114,7 +2116,25 @@ footer a:hover {
     padding-inline: 22px;
   }
 }
-@media (max-width: 640px) {
+/* 回程徽章按这一行的实际宽度排版:≥320px 横排;262–319px 横排但收紧图标和内边距;
+   不到 262px 时运营商名才改竖排小字 */
+@container (width < 320px) {
+  .route-badge-animation {
+    padding: 2px;
+  }
+  .route-badge-text {
+    padding: 3px 1px;
+  }
+  .route-badge small {
+    letter-spacing: -0.04em;
+  }
+  .route-badge strong {
+    margin-left: 2px;
+    font-size: 9.5px;
+    letter-spacing: -0.03em;
+  }
+}
+@container (width < 262px) {
   .route-badge-animation {
     padding: 2px;
   }
