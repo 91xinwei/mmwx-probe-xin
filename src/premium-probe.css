@@ -2726,6 +2726,62 @@
   padding: 1.35rem 0;
 }
 
+/* 实时上下行:两格并排,标签 / 数值与上面 CPU、内存、硬盘同一套字号和配色 */
+.premium-probe-card-speed {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+  margin: -0.35rem 0 1.15rem;
+  min-width: 0;
+}
+
+.premium-probe-card-speed > div {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.65rem;
+  border: 1px solid rgba(216, 180, 106, 0.16);
+  border-radius: 0.5rem;
+  background: rgba(216, 180, 106, 0.05);
+}
+
+.premium-probe-card-speed svg {
+  width: 0.85rem;
+  height: 0.85rem;
+  flex: 0 0 auto;
+  color: var(--pp-gold);
+}
+
+.premium-probe-card-speed span {
+  flex: 0 0 auto;
+  color: #9f9786;
+  font-size: 0.7rem;
+}
+
+.premium-probe-card-speed strong {
+  overflow: hidden;
+  margin-left: auto;
+  color: #eee5d2;
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+:root.light .premium-probe-card-speed > div {
+  border-color: rgba(168, 124, 34, 0.18);
+  background: rgba(168, 124, 34, 0.045);
+}
+
+:root.light .premium-probe-card-speed span {
+  color: #8e8675;
+}
+
+:root.light .premium-probe-card-speed strong {
+  color: #241e14;
+}
+
 .premium-probe-server-footer {
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.85fr);
