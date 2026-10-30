@@ -3462,7 +3462,6 @@ export function App() {
                     className={[
                       "server-grid",
                       density === "dense" ? "dense" : "",
-                      groupBy === "region" ? "fill" : "",
                     ]
                       .filter(Boolean)
                       .join(" ")}
